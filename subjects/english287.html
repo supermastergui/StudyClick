@@ -1,0 +1,247 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+<meta charset="UTF-8">
+<title>英语单词测试</title>
+
+<style>
+/* ===== 全局 ===== */
+body {
+    font-family: "Segoe UI", Arial;
+    background: linear-gradient(135deg, #e3f2fd, #fce4ec);
+    margin: 0;
+    padding: 20px;
+}
+
+/* 容器 */
+.container {
+    max-width: 800px;
+    margin: auto;
+}
+
+/* 标题 */
+h1 {
+    text-align: center;
+    color: #333;
+    margin-bottom: 25px;
+}
+
+/* ===== 卡片 ===== */
+.question {
+    background: #fff;
+    padding: 18px;
+    margin-bottom: 15px;
+    border-radius: 12px;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+    transition: 0.2s;
+}
+
+.question:hover {
+    transform: translateY(-2px);
+}
+
+/* ===== 选项 ===== */
+.options button {
+    display: block;
+    width: 100%;
+    margin: 8px 0;
+    padding: 12px;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    background: #f1f3f5;
+    transition: all 0.2s;
+    font-size: 15px;
+}
+
+.options button:hover {
+    background: #e0e0e0;
+}
+
+/* 正确 / 错误 */
+.correct {
+    background: #4CAF50 !important;
+    color: #fff;
+}
+
+.wrong {
+    background: #f44336 !important;
+    color: #fff;
+}
+
+/* ===== 控制按钮 ===== */
+#controls {
+    text-align: center;
+    margin-top: 20px;
+}
+
+#controls button {
+    margin: 5px;
+    padding: 10px 18px;
+    border: none;
+    border-radius: 20px;
+    cursor: pointer;
+    background: #1976d2;
+    color: white;
+    font-size: 14px;
+    transition: 0.2s;
+}
+
+#controls button:hover {
+    background: #1565c0;
+}
+
+/* ===== 结果 ===== */
+#result {
+    text-align: center;
+    font-size: 20px;
+    margin-top: 25px;
+    font-weight: bold;
+    color: #333;
+}
+
+/* ===== 错题本 ===== */
+#wrongBox {
+    background: #fff;
+    margin-top: 25px;
+    padding: 18px;
+    border-radius: 12px;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+}
+
+#wrongBox h3 {
+    margin-top: 0;
+}
+
+#wrongList li {
+    margin: 5px 0;
+    padding: 6px 10px;
+    background: #f8f9fa;
+    border-radius: 6px;
+}
+</style>
+
+</head>
+<body>
+
+<div class="container">
+
+<h1>📘 英语单词测试</h1>
+
+<div id="quiz"></div>
+<div id="result"></div>
+
+<div id="controls">
+    <button onclick="restart()">🔁 再来一套</button>
+    <button onclick="location.href='../index.html'">🏠 返回首页</button>
+</div>
+
+</div>
+
+<script>
+const WORDS = [
+["above","在…面"],["bowl","碗"],["complain","抱怨"],["December","十二月"],["education","教育"],["following","下列的"],["gun","枪"],["happen","发生"],["information","信息"],["jeans","牛仔裤"],["kick","踢"],["ability","能力"],["burn","燃烧"],["chest","胸"],["desert","沙漠"],["exercise","锻炼"],["free","自由的"],["God","上帝"],["hesitate","犹豫"],["individual","个人的"],["joy","欢乐"],["kilometre","公里"],["abroad","在国外"],["bite","咬"],["camera","照相机"],["dish","碟"],["encourage","鼓励"],["final","最后的"],["gold","黄金"],["headmaster","校长"],["indeed","的确"],["journey","旅行"],["knock","敲"],["author","作者"],["bat","球拍"],["chair","椅子"],["death","死亡"],["either","任何一方"],["forecast","预报"],["ground","地面"],["hardly","几乎不"],["impossible","不可能的"],["June","六月"],["keen","热心的"],["article","文章"],["beat","打败"],["cycle","骑车"],["dry","干的"],["earth","地球"],["French","法国的"],["gate","大门"],["history","历史"],["Italian","意大利"],["just","正好"],["kitchen","厨房"],["available","可用的"],["board","木板"],["cotton","棉花"],["difficulty","困难"],["examine","检查"],["fetch","取"],["group","小组"],["harmful","有害的"],["indoor","室内的"],["junior","初级的"],["king","国王"],["amazing","惊讶的"],["banana","香蕉"],["clever","聪明的"],["dear","亲爱的"],["explain","解释"],["floor","地板"],["goal","目标"],["hill","小山"],["ink","墨水"],["jacket","茄克衫"],["kid","小孩"],["Asia","亚洲"],["bin","箱子"],["cigarette","香烟"],["describe","描述"],["electronic","电子的"],["feel","感觉"],["glad","高兴的"],["heart","心脏"],["instead","代替"],["joke","玩笑"],["knowledge","知识"],["art","艺术"],["butterfly","蝴蝶"],["chemistry","化学"],["divide","分"],["elephant","大象"],["firework","烟火"],["German","德国的"],["hunt","打猎"],["illness","疾病"],["jump","跳"],["kill","杀死"],["awful","可怕的"],["belt","带子"],["climb","爬"],["damage","破坏"],["efficient","高效的"],["flood","洪水"],["grade","年级"],["however","然而"],["Indian","印度的"],["January","一月"],["kindness","仁慈"],["assistant","助手"],["bit","一点"],["conversation","谈话"],["degree","学位"],["effect","效果"],["fax","传真"],["glove","手套"],["hang","悬挂"],["international","国际的"],["join","参加"],["kindergarten","幼儿园"],["ahead","在前"],["blow","吹"],["church","教堂"],["dull","乏味的"],["expense","花费"],["February","二月"],["government","政府"],["homeless","无家可归的"],["iron","铁"],["July","七月"],["kite","风筝"],["Australia","澳大利亚"],["breakfast","早饭"],["close","关"],["duty","责任"],["enter","进入"],["fog","雾"],["generally","一般地"],["heat","热量"],["improve","改善"],["Japan","日本"],["key","钥匙"],["address","地址"],["bath","洗澡"],["carrot","胡萝卜"],["die","死"],["enemy","敌人"],["farm","农场"],["gain","获得"],["hut","小屋"],["increase","增加"],["jam","果酱"],["knife","小刀"],["advice","劝告"],["bund","外滩"],["cough","咳嗽"],["debate","争论"],["ever","曾经"],["foot","脚"],["grow","生长"],["historical","历史的"],["independent","独立的"],["judge","法官"],["kilo=kilogram","公斤"],["accept","接受"],["boil","煮"],["choose","选择"],["decision","决定"],["elder","年长的"],["forever","永远"],["guest","客人"],["hold","握住"],["invite","邀请"],["juice","果汁"],["keyboard","键盘"],["advertisement","广告"],["beside","在……旁边"],["compare","比较"],["drop","掉"],["extend","伸出"],["fry","油炸"],["global","全球的"],["headline","标题"],["island","岛屿"],["keep","保持"],["ago","以前"],["brush","刷子"],["convenient","便利的"],["decorate","装饰"],["empty","空的"],["fuel","燃料"],["glass","玻璃"],["health","健康"],["introduce","介绍"],["actress","女演员"],["busy","忙"],["crowded","拥挤的"],["During","在…期间"],["eve","前夕"],["fable","寓言"],["gentleman","绅士"],["height","高度"],["Inside","在……里面"],["afford","担负得起"],["balance","平衡"],["cap","帽子"],["diary","日记"],["end","结束"],["Friday","星期五"],["graduate","毕业"],["human","人类的"],["item","项目"],["August","八月"],["brave","勇敢的"],["conductor","售票员"],["dig","挖"],["event","事件"],["fever","发烧"],["Germany","德国"],["holiday","假日"],["invitation","邀请"],["artist","艺术家"],["balloon","气球"],["culture","文化"],["departure","出发"],["envelope","信封"],["fit","适合"],["garden","花园"],["hide","隐藏"],["invent","发明"],["active","积极的"],["broadcast","广播"],["carry","携带"],["dream","梦想"],["Europe","欧洲"],["fence","栅栏"],["gas","煤气"],["housework","家务活"],["immediately","立刻"],["appear","出现"],["beg","请求"],["confuse","混淆"],["deliver","投递"],["economy","经济"],["fair","公平的"],["guide","导游"],["hall","大厅"],["include","包括"],["alive","活着的"],["beer","啤酒"],["channel","频道"],["develop","发展"],["engine","发动机"],["fine","美好的"],["gentle","温柔的"],["hurt","受伤"],["interest","兴趣"],["along","沿着"],["brief","简短的"],["contest","竞赛"],["depend","依靠"],["exactly","确切地"],["fix","修理"],["guess","猜测"],["high","高的"],["inch","英寸"],["argue","争论"],["bottle","瓶"],["cent","分"],["department","百货商店"],["each","每个"],["front","前面"],["geography","地理"],["hurry","急忙"],["interview","采访"],["alone","单独地"],["being","生物"],["correct","正确的"],["daily","日报"],["expect","期待"],["France","法国"],["grass","草"],["healthy","健康的"],["Internet","互联网"],["attend","出席"],["butter","黄油"],
+];
+
+const QUESTION_COUNT = 10;
+
+let wrongBook = JSON.parse(localStorage.getItem("wrongBook") || "[]");
+
+function shuffle(arr){ return arr.sort(()=>Math.random()-0.5); }
+
+function renderWrong(){
+    const list = document.getElementById("wrongList");
+    list.innerHTML = "";
+    wrongBook.forEach(w=>{
+        let li = document.createElement("li");
+        li.innerText = `${w[0]} - ${w[1]}`;
+        list.appendChild(li);
+    });
+}
+
+function clearWrong(){
+    wrongBook = [];
+    localStorage.removeItem("wrongBook");
+    renderWrong();
+}
+
+function loadQuiz(){
+    document.getElementById("quiz").innerHTML = "";
+    document.getElementById("result").innerHTML = "";
+
+    let quizData = shuffle([...WORDS]).slice(0, QUESTION_COUNT);
+    let correctCount = 0;
+    let answered = 0;
+
+    quizData.forEach((item, index)=>{
+        let [word, correct] = item;
+
+        let wrongs = shuffle(WORDS.filter(w=>w[1]!==correct))
+            .slice(0,3).map(w=>w[1]);
+
+        let options = shuffle([correct,...wrongs]);
+
+        let qDiv = document.createElement("div");
+        qDiv.className = "question";
+
+        qDiv.innerHTML = `<b>${index+1}. ${word}</b>`;
+
+        let optDiv = document.createElement("div");
+        optDiv.className = "options";
+
+        options.forEach(opt=>{
+            let btn = document.createElement("button");
+            btn.innerText = opt;
+
+            btn.onclick = function(){
+                if(optDiv.classList.contains("done")) return;
+
+                let buttons = optDiv.querySelectorAll("button");
+
+                buttons.forEach(b=>{
+                    if(b.innerText === correct){
+                        b.classList.add("correct");
+                    }
+                    b.disabled = true;
+                });
+
+                if(opt !== correct){
+                    btn.classList.add("wrong");
+
+                    if(!wrongBook.some(w=>w[0]===word)){
+                        wrongBook.push([word, correct]);
+                        localStorage.setItem("wrongBook", JSON.stringify(wrongBook));
+                        renderWrong();
+                    }
+                } else {
+                    correctCount++;
+                }
+
+                optDiv.classList.add("done");
+                answered++;
+
+                if(answered === quizData.length){
+                    let acc = Math.round(correctCount / quizData.length *100);
+                    document.getElementById("result").innerHTML =
+                        `🎉 完成！ 正确率：${acc}%（${correctCount}/${quizData.length}）`;
+                }
+            };
+
+            optDiv.appendChild(btn);
+        });
+
+        qDiv.appendChild(optDiv);
+        document.getElementById("quiz").appendChild(qDiv);
+    });
+}
+
+function restart(){
+    loadQuiz();
+}
+
+loadQuiz();
+renderWrong();
+</script>
+
+</body>
+</html>
