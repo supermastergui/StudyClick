@@ -1,0 +1,268 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>化学方程式配平下标专项训练</title>
+<style>
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+body {
+    font-family: "Microsoft Yahei", sans-serif;
+    background: #f5f7fa;
+    padding: 30px 20px;
+}
+.container {
+    max-width: 1100px;
+    margin: 0 auto;
+}
+h1 {
+    text-align: center;
+    margin-bottom: 25px;
+    color: #333;
+}
+.toolbar {
+    text-align: center;
+    margin-bottom: 25px;
+}
+.toolbar button {
+    padding: 10px 20px;
+    margin: 0 6px;
+    border: none;
+    border-radius: 8px;
+    background: #42b983;
+    color: white;
+    font-size: 15px;
+    cursor: pointer;
+}
+.question-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 18px;
+}
+.card {
+    background: white;
+    padding: 20px;
+    border-radius: 12px;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.08);
+}
+.title {
+    font-size: 16px;
+    color: #666;
+    margin-bottom: 12px;
+}
+.equ {
+    font-size: 20px;
+    line-height: 2;
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+}
+/* 配平系数 大方框 */
+.coeff-input {
+    width: 45px;
+    height: 32px;
+    text-align: center;
+    font-size: 18px;
+    border: 1px solid #222;
+    border-radius: 5px;
+    margin: 0 4px;
+    background: #f0f8ff;
+}
+/* 化学式下标 小方框 向下偏移 */
+.sub-input {
+    width: 28px;
+    height: 24px;
+    text-align: center;
+    font-size: 14px;
+    border: 1px solid #999;
+    border-radius: 4px;
+    margin: 0 2px;
+    background: #fff5f5;
+    /* 往下移下标位置 */
+    vertical-align: -6px;
+}
+.btn-sm {
+    margin-top: 10px;
+    padding: 6px 12px;
+    background: #ff9800;
+    color: white;
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+    font-size: 14px;
+}
+.answer {
+    margin-top: 10px;
+    color: #099;
+    font-size: 16px;
+    display: none;
+}
+.tip {
+    margin-top: 6px;
+    font-weight: bold;
+    font-size: 15px;
+}
+.correct { color: #42b983; }
+.wrong { color: #f44; }
+@media (max-width:768px) {
+    .question-grid { grid-template-columns: 1fr; }
+}
+</style>
+</head>
+<body>
+<div class="container">
+    <h1>🧪 化学方程式配平&下标填空训练（10题）</h1>
+    <div class="toolbar">
+        <button onclick="refresh()">刷新10题</button>
+        <button onclick="checkAll()">全部批改</button>
+    </div>
+    <div class="question-grid" id="box"></div>
+</div>
+
+<script>
+const bank = [
+{title:"红磷/白磷燃烧",std:"4P+5O2=点燃=2P2O5"},
+{title:"木炭燃烧（氧气充足）",std:"C+O2=点燃=CO2"},
+{title:"硫粉燃烧",std:"S+O2=点燃=SO2"},
+{title:"铁丝燃烧",std:"3Fe+2O2=点燃=Fe3O4"},
+{title:"氢气燃烧",std:"2H2+O2=点燃=2H2O"},
+{title:"镁条燃烧",std:"2Mg+O2=点燃=2MgO"},
+{title:"铜丝加热",std:"2Cu+O2=加热=2CuO"},
+{title:"甲烷燃烧",std:"CH4+2O2=点燃=CO2+2H2O"},
+{title:"氯酸钾制氧气",std:"2KClO3=MnO2、加热=2KCl+3O2↑"},
+{title:"双氧水制氧气",std:"2H2O2=MnO2=2H2O+O2↑"},
+{title:"检验二氧化碳",std:"Ca(OH)2+CO2=CaCO3↓+H2O"},
+{title:"碳酸氢钙形成",std:"CO2+CaCO3+H2O=Ca(HCO3)2"},
+{title:"碳酸氢钙分解",std:"Ca(HCO3)2=加热=CaCO3↓+CO2↑+H2O"},
+{title:"一氧化碳还原氧化铁",std:"3CO+Fe2O3=高温=2Fe+3CO2"},
+{title:"氢气还原氧化铁",std:"3H2+Fe2O3=高温=2Fe+3H2O"},
+{title:"木炭还原氧化铁",std:"3C+2Fe2O3=高温=4Fe+3CO2↑"},
+{title:"电解水",std:"2H2O=通电=2H2↑+O2↑"},
+{title:"水蒸气检验",std:"CuSO4+5H2O=CuSO4·5H2O"},
+{title:"胆矾分解",std:"CuSO4·5H2O=加热=CuSO4+5H2O"},
+{title:"碳酸形成",std:"CO2+H2O=H2CO3"},
+{title:"碳酸分解",std:"H2CO3=CO2↑+H2O"},
+{title:"氧化钙溶于水",std:"CaO+H2O=Ca(OH)2"},
+{title:"镁条在二氧化碳中燃烧",std:"2Mg+CO2=点燃=C+2MgO"},
+{title:"木炭燃烧（氧气不充足）",std:"2C+O2=点燃=2CO"},
+{title:"二氧化碳制一氧化碳",std:"CO2+C=高温=2CO"},
+{title:"实验室制二氧化碳",std:"CaCO3+2HCl=CaCl2+H2O+CO2↑"},
+{title:"碳酸钠与盐酸反应",std:"Na2CO3+2HCl=2NaCl+H2O+CO2↑"},
+{title:"吸收二氧化碳",std:"2NaOH+CO2=Na2CO3+H2O"},
+{title:"一氧化碳还原氧化铜",std:"CO+CuO=加热=Cu+CO2"},
+{title:"氢气还原氧化铜",std:"H2+CuO=加热=Cu+H2O"},
+{title:"木炭还原氧化铜",std:"C+2CuO=高温=2Cu+CO2↑"},
+{title:"大理石高温煅烧",std:"CaCO3=高温=CaO+CO2↑"},
+{title:"高锰酸钾制氧气",std:"2KMnO4=加热=K2MnO4+MnO2+O2↑"},
+{title:"一氧化碳燃烧",std:"2CO+O2=点燃=2CO2"},
+{title:"铁与盐酸反应",std:"Fe+2HCl=FeCl2+H2↑"},
+{title:"铁与硫酸反应",std:"Fe+H2SO4=FeSO4+H2↑"},
+{title:"镁与盐酸反应",std:"Mg+2HCl=MgCl2+H2↑"},
+{title:"镁与硫酸反应",std:"Mg+H2SO4=MgSO4+H2↑"},
+{title:"锌与盐酸反应",std:"Zn+2HCl=ZnCl2+H2↑"},
+{title:"锌与硫酸反应",std:"Zn+H2SO4=ZnSO4+H2↑"},
+{title:"铝与盐酸反应",std:"2Al+6HCl=2AlCl3+3H2↑"},
+{title:"铝与硫酸反应",std:"2Al+3H2SO4=Al2(SO4)3+3H2↑"},
+{title:"盐酸与碳酸钠反应",std:"Na2CO3+2HCl=2NaCl+H2O+CO2↑"},
+{title:"硫酸与碳酸钠反应",std:"Na2CO3+H2SO4=Na2SO4+H2O+CO2↑"},
+{title:"盐酸与碳酸钙反应",std:"CaCO3+2HCl=CaCl2+H2O+CO2↑"},
+{title:"二氧化碳与氢氧化钠反应",std:"2NaOH+CO2=Na2CO3+H2O"},
+{title:"二氧化硫与氢氧化钠反应",std:"2NaOH+SO2=Na2SO3+H2O"},
+{title:"二氧化碳与氢氧化钙反应",std:"Ca(OH)2+CO2=CaCO3↓+H2O"},
+{title:"二氧化硫与氢氧化钙反应",std:"Ca(OH)2+SO2=CaSO3↓+H2O"},
+{title:"二氧化碳与氢氧化钡反应",std:"Ba(OH)2+CO2=BaCO3↓+H2O"},
+{title:"二氧化硫与氢氧化钡反应",std:"Ba(OH)2+SO2=BaSO3↓+H2O"},
+{title:"二氧化碳与氢氧化钾反应",std:"2KOH+CO2=K2CO3+H2O"},
+{title:"二氧化硫与氢氧化钾反应",std:"2KOH+SO2=K2SO3+H2O"},
+{title:"铁与硝酸铜反应",std:"Fe+Cu(NO3)2=Fe(NO3)2+Cu"},
+{title:"铁与硝酸银反应",std:"Fe+2AgNO3=Fe(NO3)2+2Ag"},
+{title:"铁与硫酸铜反应",std:"Fe+CuSO4=FeSO4+Cu"},
+{title:"铜与硝酸银反应",std:"Cu+2AgNO3=Cu(NO3)2+2Ag"},
+{title:"锌与硝酸铜反应",std:"Zn+Cu(NO3)2=Zn(NO3)2+Cu"},
+{title:"锌与硝酸银反应",std:"Zn+2AgNO3=Zn(NO3)2+2Ag"},
+{title:"铁与硝酸铜反应",std:"Fe+Cu(NO3)2=Fe(NO3)2+Cu"},
+{title:"盐酸与硝酸银反应",std:"AgNO3+HCl=AgCl↓+HNO3"},
+{title:"碳酸钠与氯化钙反应",std:"Na2CO3+CaCl2=CaCO3↓+2NaCl"},
+{title:"碳酸钠与氯化钡反应",std:"Na2CO3+BaCl2=BaCO3↓+2NaCl"},
+{title:"氢氧化钠与硫酸铜反应",std:"2NaOH+CuSO4=Cu(OH)2↓+Na2SO4"},
+{title:"氢氧化钠与硫酸铁反应",std:"6NaOH+Fe2(SO4)3=2Fe(OH)3↓+3Na2SO4"},
+{title:"盐酸与氧化铜反应",std:"2HCl+CuO=CuCl2+H2O"},
+{title:"盐酸与氧化铁反应",std:"6HCl+Fe2O3=2FeCl3+3H2O"},
+{title:"硫酸与氧化铜反应",std:"H2SO4+CuO=CuSO4+H2O"},
+{title:"硫酸与氧化铁反应",std:"3H2SO4+Fe2O3=Fe2(SO4)3+3H2O"},
+{title:"氢氧化钠与盐酸中和",std:"NaOH+HCl=NaCl+H2O"},
+{title:"氢氧化钠与硫酸中和",std:"2NaOH+H2SO4=Na2SO4+2H2O"}
+];
+
+let curr = [];
+
+// 区分：开头配平系数 → 大框；化学式里下标 → 小框
+function renderEq(str){
+    // 先匹配 化学式内部下标数字 如 O2 P2O5 里的2、5
+    let res = str.replace(/([A-Za-z])\d+/g, m=>{
+        let char = m.match(/[A-Za-z]/)[0];
+        let num = m.match(/\d+/)[0];
+        return char + `<input class="sub-input" data-ans="${num}" type="text">`;
+    });
+    // 再匹配 最开头配平系数
+    res = res.replace(/(^|\+|=)\d+/g, m=>{
+        let prefix = m.replace(/\d+/,'');
+        let num = m.match(/\d+/)[0];
+        return prefix + `<input class="coeff-input" data-ans="${num}" type="text">`;
+    });
+    return res;
+}
+
+function rand10(){
+    let t = [...bank];
+    let r = [];
+    for(let i=0;i<10;i++){
+        let idx = Math.floor(Math.random()*t.length);
+        r.push(t.splice(idx,1)[0]);
+    }
+    return r;
+}
+
+function refresh(){
+    curr = rand10();
+    let box = document.getElementById("box");
+    box.innerHTML = "";
+    curr.forEach((it,i)=>{
+        let eq = renderEq(it.std);
+        box.innerHTML += `
+        <div class="card">
+            <div class="title">${i+1}. ${it.title}</div>
+            <div class="equ">${eq}</div>
+            <button class="btn-sm" onclick="showAns(${i})">显示答案</button>
+            <div class="answer" id="a${i}">${it.std}</div>
+            <div class="tip" id="t${i}"></div>
+        </div>`;
+    });
+}
+
+function showAns(i){
+    let a = document.getElementById("a"+i);
+    a.style.display = a.style.display=="block"?"none":"block";
+}
+
+function checkAll(){
+    document.querySelectorAll(".card").forEach((c,i)=>{
+        let inputs = c.querySelectorAll("input");
+        let ok = true;
+        inputs.forEach(inp=>{
+            if(inp.value.trim() !== inp.dataset.ans) ok = false;
+        });
+        let tip = document.getElementById("t"+i);
+        tip.innerText = ok ? "✅ 全部正确" : "❌ 有错误";
+        tip.className = "tip " + (ok?"correct":"wrong");
+    });
+}
+
+window.onload = refresh;
+</script>
+</body>
+</html>

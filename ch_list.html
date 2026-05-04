@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>化学题库转换工具</title>
+</head>
+<body>
+
+<textarea id="input" style="width:100%;height:200px;"></textarea>
+<button onclick="convert()">转换</button>
+<pre id="output"></pre>
+
+<script>
+
+function cleanLatex(str){
+    return str
+        .replace(/\$\$\\boldsymbol{|}\$\$/g, "")
+        .replace(/\\xlongequal.*?{(.*?)}/g, "→")
+        .replace(/\\Delta/g, "加热")
+        .replace(/\\text{(.*?)}/g, "$1")
+        .replace(/_/g, "")
+        .replace(/\\uparrow/g, "↑")
+        .replace(/\\downarrow/g, "↓")
+        .replace(/\s+/g, " ")
+        .trim();
+}
+
+function convert(){
+    let input = document.getElementById("input").value;
+    let lines = input.split("\n");
+
+    let result = [];
+
+    let currentTitle = "";
+
+    lines.forEach(line=>{
+        line = line.trim();
+
+        // 标题
+        if(line.match(/^\d+\./)){
+            currentTitle = line.replace(/^\d+\.\s*/, "").replace("：","");
+        }
+
+        // 方程式
+        if(line.includes("$$")){
+            let eq = cleanLatex(line);
+
+            result.push({
+                title: currentTitle,
+                answer: eq,
+                condition: extractCondition(line)
+            });
+        }
+    });
+
+    document.getElementById("output").textContent =
+        "const questionBank = " + JSON.stringify(result, null, 2);
+}
+
+// 提取条件
+function extractCondition(line){
+    if(line.includes("点燃")) return "点燃";
+    if(line.includes("高温")) return "高温";
+    if(line.includes("MnO_2")) return "MnO2";
+    if(line.includes("通电")) return "通电";
+    if(line.includes("Δ")) return "加热";
+    return "";
+}
+
+</script>
+
+</body>
+</html>
