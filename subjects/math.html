@@ -1,0 +1,594 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>初三数学核心知识点自测</title>
+    <style>
+        * {
+            box-sizing: border-box;
+            font-family: "Microsoft YaHei", sans-serif;
+        }
+        body {
+            background-color: #f5f7fa;
+            margin: 0;
+            padding: 20px;
+            max-width: 900px;
+            margin: 0 auto;
+        }
+        .title {
+            text-align: center;
+            color: #2c3e50;
+            margin-bottom: 10px;
+            font-size: 24px;
+        }
+        .tip {
+            text-align: center;
+            color: #7f8c8d;
+            margin-bottom: 30px;
+            font-size: 14px;
+        }
+        .question-box {
+            background: white;
+            border-radius: 10px;
+            padding: 20px;
+            margin-bottom: 20px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+        }
+        .question-title {
+            font-size: 16px;
+            color: #2d3436;
+            margin-bottom: 15px;
+            font-weight: bold;
+        }
+        .options {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 10px;
+        }
+        .option {
+            padding: 12px 15px;
+            border: 1px solid #ddd;
+            border-radius: 6px;
+            cursor: pointer;
+            transition: all 0.2s;
+            font-size: 15px;
+        }
+        .option:hover:not(.disabled) {
+            background-color: #f0f4f8;
+            border-color: #3498db;
+        }
+        .option.disabled {
+            cursor: not-allowed;
+        }
+        .option.correct {
+            background-color: #2ecc71;
+            color: white;
+            border-color: #27ae60;
+        }
+        .option.wrong {
+            background-color: #e74c3c;
+            color: white;
+            border-color: #c0392b;
+        }
+        .result-box {
+            background: white;
+            border-radius: 10px;
+            padding: 30px;
+            text-align: center;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.15);
+            margin-top: 30px;
+            display: none;
+        }
+        .result-title {
+            font-size: 22px;
+            color: #2c3e50;
+            margin-bottom: 20px;
+        }
+        .result-text {
+            font-size: 18px;
+            line-height: 1.8;
+            color: #34495e;
+        }
+        .refresh-btn {
+            margin-top: 20px;
+            padding: 12px 30px;
+            background-color: #3498db;
+            color: white;
+            border: none;
+            border-radius: 6px;
+            font-size: 16px;
+            cursor: pointer;
+        }
+        .refresh-btn:hover {
+            background-color: #2980b9;
+        }
+    </style>
+</head>
+<body>
+    <div class="title">初三数学核心知识点随机自测</div>
+    <div class="tip">每次刷新随机10道题，点击选项即可作答，做完自动出成绩</div>
+
+    <div id="questions-container"></div>
+    <div class="result-box" id="resultBox">
+        <div class="result-title">🎉 测试完成 🎉</div>
+        <div class="result-text" id="resultText"></div>
+        <button class="refresh-btn" onclick="location.reload()">刷新重新做题</button>
+    </div>
+
+    <script>
+        // 初三数学题库（扩充至70道，覆盖全部8大核心知识点，细分每个考点）
+        const questionBank = [
+            // 一、实数（10道）
+            {
+                q: "下列属于无理数的是？",
+                a: "无限不循环小数",
+                options: ["无限不循环小数", "整数", "有限小数", "分数"]
+            },
+            {
+                q: "实数的分类不包括下列哪一项？",
+                a: "虚数",
+                options: ["有理数", "无理数", "虚数", "整数"]
+            },
+            {
+                q: "下列属于负整数的是？",
+                a: "-3",
+                options: ["-3", "0", "2.5", "1/2"]
+            },
+            {
+                q: "近似数0.0205的有效数字有几位？",
+                a: "3位",
+                options: ["3位", "4位", "2位", "5位"]
+            },
+            {
+                q: "近似数3.14×10⁴的有效数字是？",
+                a: "3、1、4",
+                options: ["3、1、4", "3、1、4、0、0", "3、1", "1、4"]
+            },
+            {
+                q: "科学记数法a×10ⁿ中，n为整数，下列说法正确的是？",
+                a: "1≤|a|<10",
+                options: ["1≤|a|<10", "a可以为0", "n必须为正数", "|a|≥10"]
+            },
+            {
+                q: "将36000用科学记数法表示，正确的是？",
+                a: "3.6×10⁴",
+                options: ["3.6×10⁴", "36×10³", "0.36×10⁵", "3.6×10³"]
+            },
+            {
+                q: "将0.00025用科学记数法表示，正确的是？",
+                a: "2.5×10⁻⁴",
+                options: ["2.5×10⁻⁴", "25×10⁻⁵", "0.25×10⁻³", "2.5×10⁴"]
+            },
+            {
+                q: "下列说法正确的是？",
+                a: "0是整数，也是有理数",
+                options: ["0是整数，也是有理数", "0是无理数", "分数不是有理数", "无限循环小数是无理数"]
+            },
+            {
+                q: "下列属于正分数的是？",
+                a: "3/4",
+                options: ["3/4", "-1/2", "5", "0"]
+            },
+
+            // 二、整式与分式（15道）
+            {
+                q: "单项式和多项式统称为什么？",
+                a: "整式",
+                options: ["整式", "分式", "根式", "方程"]
+            },
+            {
+                q: "下列属于单项式的是？",
+                a: "5x",
+                options: ["5x", "2x+3", "x/y", "√x"]
+            },
+            {
+                q: "整式加减的核心步骤是？",
+                a: "去括号、合并同类项",
+                options: ["去括号、合并同类项", "去分母、移项", "因式分解、约分", "通分、化简"]
+            },
+            {
+                q: "单项式×单项式的运算规则是？",
+                a: "系数相乘、同底数幂指数相加",
+                options: ["系数相乘、同底数幂指数相加", "系数相加、同底数幂指数相乘", "系数相乘、同底数幂指数相乘", "系数相加、同底数幂指数相加"]
+            },
+            {
+                q: "多项式×单项式的运算依据是？",
+                a: "分配律",
+                options: ["分配律", "结合律", "交换律", "平方差公式"]
+            },
+            {
+                q: "平方差公式(a+b)(a−b)的结果是？",
+                a: "a²−b²",
+                options: ["a²−b²", "a²+b²", "(a−b)²", "a²−2ab+b²"]
+            },
+            {
+                q: "完全平方公式(a−b)²的结果是？",
+                a: "a²−2ab+b²",
+                options: ["a²−2ab+b²", "a²−b²", "a²+2ab+b²", "a²−ab+b²"]
+            },
+            {
+                q: "因式分解的本质是？",
+                a: "把多项式化为整式积的形式",
+                options: ["把多项式化为整式积的形式", "把整式化为多项式", "把分式化为整式", "把根式化为整式"]
+            },
+            {
+                q: "下列不属于因式分解方法的是？",
+                a: "通分法",
+                options: ["通分法", "提公因式法", "公式法", "十字相乘法"]
+            },
+            {
+                q: "分式有意义的条件是？",
+                a: "分母不等于0",
+                options: ["分母不等于0", "分子不等于0", "分子分母都不为0", "任意情况都有意义"]
+            },
+            {
+                q: "分式的基本性质是？",
+                a: "分子分母同乘/除非零整式，值不变",
+                options: ["分子分母同乘/除非零整式，值不变", "分子分母同乘/除任意整式，值不变", "分子分母同时加一个数，值不变", "分子分母同时减一个数，值不变"]
+            },
+            {
+                q: "分式加减运算的第一步是？",
+                a: "通分",
+                options: ["通分", "约分", "去分母", "合并同类项"]
+            },
+            {
+                q: "零指数幂a⁰（a≠0）的值是？",
+                a: "1",
+                options: ["1", "0", "a", "无意义"]
+            },
+            {
+                q: "负整数指数幂a⁻ⁿ（a≠0，n为正整数）等于？",
+                a: "1/aⁿ",
+                options: ["1/aⁿ", "aⁿ", "-aⁿ", "1/(-a)ⁿ"]
+            },
+            {
+                q: "下列属于分式的是？",
+                a: "x/(x+1)",
+                options: ["x/(x+1)", "2x", "x²+3", "√(x+2)"]
+            },
+
+            // 三、二次根式（10道）
+            {
+                q: "二次根式√a有意义的条件是？",
+                a: "a≥0",
+                options: ["a≥0", "a>0", "a≤0", "a<0"]
+            },
+            {
+                q: "√a²（a为任意实数）的化简结果是？",
+                a: "|a|",
+                options: ["|a|", "a", "−a", "a²"]
+            },
+            {
+                q: "(\u221a a)²（a≥0）的化简结果是？",
+                a: "a",
+                options: ["a", "|a|", "√a", "a²"]
+            },
+            {
+                q: "√(ab)（a≥0，b≥0）的化简结果是？",
+                a: "√a·√b",
+                options: ["√a·√b", "√a+√b", "√(a+b)", "√a/√b"]
+            },
+            {
+                q: "√(a/b)（a≥0，b>0）的化简结果是？",
+                a: "√a/√b",
+                options: ["√a/√b", "√a·√b", "√(ab)/b", "√b/√a"]
+            },
+            {
+                q: "下列属于最简二次根式的是？",
+                a: "√3",
+                options: ["√3", "√12", "√(1/2)", "√48"]
+            },
+            {
+                q: "同类二次根式是指？",
+                a: "化简后被开方数相同的二次根式",
+                options: ["化简后被开方数相同的二次根式", "被开方数相同的二次根式", "根指数相同的二次根式", "数值相同的二次根式"]
+            },
+            {
+                q: "二次根式加减运算的核心是？",
+                a: "合并同类二次根式",
+                options: ["合并同类二次根式", "直接将被开方数相加", "直接将根指数相加", "约分后再加减"]
+            },
+            {
+                q: "二次根式乘法运算的规则是？",
+                a: "被开方数相乘，根指数不变",
+                options: ["被开方数相乘，根指数不变", "被开方数相加，根指数不变", "被开方数相乘，根指数相加", "被开方数相除，根指数不变"]
+            },
+            {
+                q: "分母有理化的目的是？",
+                a: "去掉分母中的根号",
+                options: ["去掉分母中的根号", "去掉分子中的根号", "化简分子", "扩大分式的值"]
+            },
+
+            // 四、方程与不等式（15道）
+            {
+                q: "一元一次方程的定义是？",
+                a: "只含1个未知数、次数为1的整式方程",
+                options: ["只含1个未知数、次数为1的整式方程", "含多个未知数、次数为1的方程", "只含1个未知数、次数为2的方程", "分式方程"]
+            },
+            {
+                q: "解一元一次方程的步骤正确的是？",
+                a: "去分母→去括号→移项→化ax=b→系数化1",
+                options: ["去分母→去括号→移项→化ax=b→系数化1", "去括号→去分母→移项→系数化1→化ax=b", "移项→去分母→去括号→系数化1", "去分母→移项→去括号→系数化1"]
+            },
+            {
+                q: "二元一次方程组的解法不包括？",
+                a: "公式法",
+                options: ["公式法", "代入消元法", "加减消元法", "消元法"]
+            },
+            {
+                q: "解三元一次方程组的核心思路是？",
+                a: "消元→二元→一元",
+                options: ["消元→二元→一元", "直接求解", "因式分解", "配方法"]
+            },
+            {
+                q: "一元二次方程的一般式ax²+bx+c=0中，a的取值要求是？",
+                a: "a≠0",
+                options: ["a≠0", "a>0", "a<0", "a=0"]
+            },
+            {
+                q: "下列不属于一元二次方程解法的是？",
+                a: "代入消元法",
+                options: ["代入消元法", "开平方法", "因式分解法", "配方法"]
+            },
+            {
+                q: "一元二次方程的求根公式是？",
+                a: "x=(-b±√(b²-4ac))/(2a)",
+                options: ["x=(-b±√(b²-4ac))/(2a)", "x=(b±√(b²-4ac))/(2a)", "x=(-b±√(4ac-b²))/(2a)", "x=(-b±√(b²+4ac))/(2a)"]
+            },
+            {
+                q: "一元二次方程判别式Δ=0时，根的情况是？",
+                a: "两个相等的实数根",
+                options: ["两个相等的实数根", "两个不相等的实数根", "无实数根", "无数个根"]
+            },
+            {
+                q: "解分式方程的关键步骤是？",
+                a: "去分母转化为整式方程，最后检验",
+                options: ["去分母转化为整式方程，最后检验", "直接求解", "因式分解", "配方法"]
+            },
+            {
+                q: "无理方程的定义是？",
+                a: "被开方数含未知数的方程",
+                options: ["被开方数含未知数的方程", "分母含未知数的方程", "含二次项的方程", "含多个未知数的方程"]
+            },
+            {
+                q: "解无理方程的第一步是？",
+                a: "去根号",
+                options: ["去根号", "去分母", "移项", "合并同类项"]
+            },
+            {
+                q: "不等式两边同时加上同一个数，不等号方向？",
+                a: "不变",
+                options: ["不变", "改变", "消失", "不确定"]
+            },
+            {
+                q: "不等式两边同时除以一个负数，不等号方向？",
+                a: "改变",
+                options: ["改变", "不变", "消失", "不确定"]
+            },
+            {
+                q: "解一元一次不等式时，系数化为1若系数为负，需要？",
+                a: "改变不等号方向",
+                options: ["改变不等号方向", "不变不等号方向", "去掉不等号", "两边同乘-1"]
+            },
+            {
+                q: "不等式组的解集是指？",
+                a: "各不等式解集的公共部分",
+                options: ["各不等式解集的公共部分", "各不等式解集的总和", "任意一个不等式的解集", "所有不等式解集的差"]
+            },
+
+            // 五、三角形（10道）
+            {
+                q: "三角形的高、中线、角平分线都是？",
+                a: "线段",
+                options: ["线段", "射线", "直线", "射线或直线"]
+            },
+            {
+                q: "三角形三边关系正确的是？",
+                a: "两边之和大于第三边，两边之差小于第三边",
+                options: ["两边之和大于第三边，两边之差小于第三边", "两边之和小于第三边", "两边之差大于第三边", "无固定关系"]
+            },
+            {
+                q: "三角形内角和为多少度？",
+                a: "180°",
+                options: ["180°", "90°", "360°", "270°"]
+            },
+            {
+                q: "三角形外角和为多少度？",
+                a: "360°",
+                options: ["360°", "180°", "90°", "540°"]
+            },
+            {
+                q: "三角形的一个外角等于？",
+                a: "与它不相邻的两个内角和",
+                options: ["与它不相邻的两个内角和", "与它相邻的内角", "所有内角和", "与它相邻的两个内角和"]
+            },
+            {
+                q: "全等三角形的性质是？",
+                a: "对应边、对应角都相等",
+                options: ["对应边、对应角都相等", "对应边相等，对应角不相等", "对应角相等，对应边不相等", "所有边和角都相等"]
+            },
+            {
+                q: "下列不属于全等三角形判定定理的是？",
+                a: "AAA",
+                options: ["AAA", "SSS", "SAS", "ASA"]
+            },
+            {
+                q: "直角三角形全等的特殊判定定理是？",
+                a: "HL",
+                options: ["HL", "SSS", "SAS", "ASA"]
+            },
+            {
+                q: "等腰三角形“三线合一”是指？",
+                a: "顶角平分线、底边上的中线、底边上的高重合",
+                options: ["顶角平分线、底边上的中线、底边上的高重合", "三条中线重合", "三条高重合", "三条角平分线重合"]
+            },
+            {
+                q: "直角三角形中，30°角所对的直角边等于？",
+                a: "斜边的一半",
+                options: ["斜边的一半", "斜边的2倍", "另一条直角边的一半", "另一条直角边的2倍"]
+            },
+
+            // 六、相似三角形（5道）
+            {
+                q: "相似三角形的定义是？",
+                a: "三角对应相等、三边对应成比例",
+                options: ["三角对应相等、三边对应成比例", "三角对应相等", "三边对应成比例", "对应边相等、对应角相等"]
+            },
+            {
+                q: "相似比为1的两个三角形是？",
+                a: "全等三角形",
+                options: ["全等三角形", "等腰三角形", "直角三角形", "等边三角形"]
+            },
+            {
+                q: "相似三角形面积比与相似比的关系是？",
+                a: "面积比=相似比的平方",
+                options: ["面积比=相似比的平方", "面积比=相似比", "面积比=相似比的立方", "无关系"]
+            },
+            {
+                q: "三角形重心的性质是？",
+                a: "到顶点的距离是到对边中点距离的2倍",
+                options: ["到顶点的距离是到对边中点距离的2倍", "到顶点的距离等于到对边中点的距离", "是三条高的交点", "是三条角平分线的交点"]
+            },
+            {
+                q: "下列能判定两个三角形相似的是？",
+                a: "两角对应相等",
+                options: ["两角对应相等", "两边对应相等", "一角对应相等", "三边对应相等"]
+            },
+
+            // 七、四边形（5道）
+            {
+                q: "n边形内角和公式是？",
+                a: "(n−2)×180°",
+                options: ["(n−2)×180°", "n×180°", "(n+2)×180°", "n×360°"]
+            },
+            {
+                q: "任意多边形的外角和是？",
+                a: "360°",
+                options: ["360°", "180°", "(n−2)×180°", "n×180°"]
+            },
+            {
+                q: "平行四边形的性质不包括？",
+                a: "对角线相等",
+                options: ["对角线相等", "对边相等", "对角相等", "对角线互相平分"]
+            },
+            {
+                q: "菱形的四边关系是？",
+                a: "四条边都相等",
+                options: ["四条边都相等", "对边相等，邻边不等", "只有一组对边相等", "无固定关系"]
+            },
+            {
+                q: "梯形中位线的性质是？",
+                a: "平行于两底，且等于两底和的一半",
+                options: ["平行于两底，且等于两底和的一半", "平行于两底，且等于两底差的一半", "垂直于两底，且等于两底和的一半", "平行于一底，且等于另一底的一半"]
+            },
+
+            // 八、圆与正多边形（5道）
+            {
+                q: "圆的周长公式是？",
+                a: "C=2πr",
+                options: ["C=2πr", "C=πr²", "C=πr", "C=2πd"]
+            },
+            {
+                q: "圆的面积公式是？",
+                a: "S=πr²",
+                options: ["S=πr²", "S=2πr", "S=πd", "S=πr³"]
+            },
+            {
+                q: "n°圆心角所对弧长公式是？",
+                a: "l=nπr/180",
+                options: ["l=nπr/180", "l=nπr/360", "l=nr/180", "l=2πr"]
+            },
+            {
+                q: "垂径定理的内容是？",
+                a: "过圆心且垂直于弦的直线，平分弦且平分弦所对的两条弧",
+                options: ["过圆心且垂直于弦的直线，平分弦且平分弦所对的两条弧", "垂直于弦的直线平分弦", "过圆心的直线平分弦", "平分弦的直线垂直于弦"]
+            },
+            {
+                q: "确定一个圆的条件是？",
+                a: "不在同一直线上的三点",
+                options: ["不在同一直线上的三点", "两点", "一点和半径", "圆心"]
+            }
+        ];
+
+        // 随机打乱数组
+        function shuffle(arr) {
+            let newArr = [...arr];
+            for (let i = newArr.length - 1; i > 0; i--) {
+                const j = Math.floor(Math.random() * (i + 1));
+                [newArr[i], newArr[j]] = [newArr[j], newArr[i]];
+            }
+            return newArr;
+        }
+
+        // 随机抽取10道题
+        let selectedQuestions = shuffle(questionBank).slice(0, 10);
+        let correctCount = 0;
+        let answeredCount = 0;
+
+        // 渲染题目
+        const container = document.getElementById('questions-container');
+        selectedQuestions.forEach((item, index) => {
+            // 打乱选项
+            const shuffledOpts = shuffle(item.options);
+            const qBox = document.createElement('div');
+            qBox.className = 'question-box';
+            qBox.innerHTML = `
+                <div class="question-title">${index + 1}. ${item.q}</div>
+                <div class="options">
+                    ${shuffledOpts.map((opt, i) => `
+                        <div class="option" data-qindex="${index}" data-answer="${opt === item.a}">
+                            ${opt}
+                        </div>
+                    `).join('')}
+                </div>
+            `;
+            container.appendChild(qBox);
+        });
+
+        // 绑定点击事件
+        document.querySelectorAll('.option').forEach(opt => {
+            opt.addEventListener('click', function() {
+                // 已答题目不可重复点击
+                if (this.classList.contains('disabled')) return;
+
+                const isCorrect = this.dataset.answer === 'true';
+                const parent = this.closest('.question-box');
+                const allOpts = parent.querySelectorAll('.option');
+
+                // 禁用所有选项
+                allOpts.forEach(o => o.classList.add('disabled'));
+
+                // 标色
+                if (isCorrect) {
+                    this.classList.add('correct');
+                    correctCount++;
+                } else {
+                    this.classList.add('wrong');
+                    // 自动标出正确答案
+                    allOpts.forEach(o => {
+                        if (o.dataset.answer === 'true') o.classList.add('correct');
+                    });
+                }
+
+                answeredCount++;
+                // 全部答完显示结果
+                if (answeredCount === selectedQuestions.length) {
+                    showResult();
+                }
+            });
+        });
+
+        // 显示成绩
+        function showResult() {
+            const rate = ((correctCount / selectedQuestions.length) * 100).toFixed(1);
+            document.getElementById('resultText').innerHTML = `
+                总题数：${selectedQuestions.length} 道<br>
+                答对题数：${correctCount} 道<br>
+                正确率：${rate}%
+            `;
+            document.getElementById('resultBox').style.display = 'block';
+        }
+    </script>
+</body>
+</html>
