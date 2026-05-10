@@ -13,7 +13,7 @@
             background-color: #f5f7fa;
             margin: 0;
             padding: 20px;
-            max-width: 900px;
+            max-width: 1100px;
             margin: 0 auto;
         }
         .title {
@@ -41,18 +41,20 @@
             margin-bottom: 15px;
             font-weight: bold;
         }
+        /* 选项改成一行四列横向排列 */
         .options {
             display: grid;
-            grid-template-columns: 1fr;
-            gap: 10px;
+            grid-template-columns: 1fr 1fr 1fr 1fr;
+            gap: 12px;
         }
         .option {
-            padding: 12px 15px;
+            padding: 12px 8px;
             border: 1px solid #ddd;
             border-radius: 6px;
             cursor: pointer;
             transition: all 0.2s;
             font-size: 15px;
+            text-align: center;
         }
         .option:hover:not(.disabled) {
             background-color: #f0f4f8;
@@ -103,6 +105,12 @@
         .refresh-btn:hover {
             background-color: #2980b9;
         }
+        /* 手机端自动变回竖排 */
+        @media (max-width: 768px) {
+            .options {
+                grid-template-columns: 1fr 1fr;
+            }
+        }
     </style>
 </head>
 <body>
@@ -117,7 +125,7 @@
     </div>
 
     <script>
-        // 初三数学题库（扩充至70道，覆盖全部8大核心知识点，细分每个考点）
+        // 初三数学扩充题库 70道
         const questionBank = [
             // 一、实数（10道）
             {
@@ -260,7 +268,7 @@
                 options: ["|a|", "a", "−a", "a²"]
             },
             {
-                q: "(\u221a a)²（a≥0）的化简结果是？",
+                q: "(√a)²（a≥0）的化简结果是？",
                 a: "a",
                 options: ["a", "|a|", "√a", "a²"]
             },
@@ -529,15 +537,14 @@
         // 渲染题目
         const container = document.getElementById('questions-container');
         selectedQuestions.forEach((item, index) => {
-            // 打乱选项
             const shuffledOpts = shuffle(item.options);
             const qBox = document.createElement('div');
             qBox.className = 'question-box';
             qBox.innerHTML = `
                 <div class="question-title">${index + 1}. ${item.q}</div>
                 <div class="options">
-                    ${shuffledOpts.map((opt, i) => `
-                        <div class="option" data-qindex="${index}" data-answer="${opt === item.a}">
+                    ${shuffledOpts.map(opt => `
+                        <div class="option" data-answer="${opt === item.a}">
                             ${opt}
                         </div>
                     `).join('')}
@@ -549,30 +556,25 @@
         // 绑定点击事件
         document.querySelectorAll('.option').forEach(opt => {
             opt.addEventListener('click', function() {
-                // 已答题目不可重复点击
                 if (this.classList.contains('disabled')) return;
 
                 const isCorrect = this.dataset.answer === 'true';
                 const parent = this.closest('.question-box');
                 const allOpts = parent.querySelectorAll('.option');
 
-                // 禁用所有选项
                 allOpts.forEach(o => o.classList.add('disabled'));
 
-                // 标色
                 if (isCorrect) {
                     this.classList.add('correct');
                     correctCount++;
                 } else {
                     this.classList.add('wrong');
-                    // 自动标出正确答案
                     allOpts.forEach(o => {
                         if (o.dataset.answer === 'true') o.classList.add('correct');
                     });
                 }
 
                 answeredCount++;
-                // 全部答完显示结果
                 if (answeredCount === selectedQuestions.length) {
                     showResult();
                 }
