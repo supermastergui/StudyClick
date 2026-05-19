@@ -1,0 +1,699 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>英语单词抽测</title>
+<style>
+/* ===== 全局 ===== */
+* { box-sizing: border-box; margin: 0; padding: 0; }
+
+body {
+    font-family: "Segoe UI", "Microsoft YaHei", sans-serif;
+    background: linear-gradient(135deg, #e8eaf6 0%, #fce4ec 50%, #e0f2f1 100%);
+    min-height: 100vh;
+    padding: 20px;
+}
+
+.container {
+    max-width: 780px;
+    margin: 0 auto;
+}
+
+/* ===== 头部 ===== */
+.header {
+    text-align: center;
+    padding: 30px 20px 20px;
+}
+
+.header h1 {
+    font-size: 28px;
+    color: #333;
+    margin-bottom: 6px;
+}
+
+.header .subtitle {
+    color: #888;
+    font-size: 13px;
+}
+
+/* ===== 控制栏 ===== */
+.control-bar {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 12px;
+    margin-bottom: 20px;
+    flex-wrap: wrap;
+}
+
+.control-bar label {
+    font-size: 15px;
+    color: #555;
+    font-weight: 500;
+}
+
+.control-bar select {
+    padding: 8px 14px;
+    border: 1px solid #ccc;
+    border-radius: 10px;
+    font-size: 15px;
+    background: #fff;
+    cursor: pointer;
+    outline: none;
+    transition: border-color 0.2s;
+}
+
+.control-bar select:focus {
+    border-color: #5c6bc0;
+}
+
+.control-bar button {
+    padding: 9px 22px;
+    border: none;
+    border-radius: 20px;
+    font-size: 14px;
+    cursor: pointer;
+    font-weight: 500;
+    transition: all 0.2s;
+}
+
+.btn-start {
+    background: #5c6bc0;
+    color: #fff;
+}
+
+.btn-start:hover { background: #3f51b5; }
+
+.btn-reset {
+    background: #ef5350;
+    color: #fff;
+}
+
+.btn-reset:hover { background: #d32f2f; }
+
+.btn-home {
+    background: #78909c;
+    color: #fff;
+}
+
+.btn-home:hover { background: #546e7a; }
+
+/* ===== 进度条 ===== */
+.progress-wrap {
+    margin-bottom: 20px;
+}
+
+.progress-text {
+    font-size: 13px;
+    color: #666;
+    margin-bottom: 4px;
+    text-align: center;
+}
+
+.progress-bar {
+    height: 6px;
+    background: #e0e0e0;
+    border-radius: 3px;
+    overflow: hidden;
+}
+
+.progress-fill {
+    height: 100%;
+    background: linear-gradient(90deg, #5c6bc0, #26c6da);
+    border-radius: 3px;
+    transition: width 0.3s ease;
+    width: 0%;
+}
+
+/* ===== 题目卡片 ===== */
+.question {
+    background: #fff;
+    padding: 18px 20px;
+    margin-bottom: 14px;
+    border-radius: 14px;
+    box-shadow: 0 2px 12px rgba(0,0,0,0.06);
+    transition: box-shadow 0.2s;
+}
+
+.question:hover {
+    box-shadow: 0 4px 20px rgba(0,0,0,0.10);
+}
+
+.question .q-title {
+    font-size: 18px;
+    font-weight: 600;
+    color: #333;
+    margin-bottom: 12px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.question .q-num {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 28px;
+    height: 28px;
+    border-radius: 50%;
+    background: #e8eaf6;
+    color: #5c6bc0;
+    font-size: 13px;
+    font-weight: 700;
+    flex-shrink: 0;
+}
+
+.question .q-word {
+    color: #1a237e;
+}
+
+/* ===== 选项按钮 ===== */
+.options-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 8px;
+}
+
+@media (max-width: 500px) {
+    .options-grid {
+        grid-template-columns: 1fr;
+    }
+}
+
+.option-btn {
+    display: block;
+    width: 100%;
+    padding: 11px 14px;
+    border: 2px solid #e0e0e0;
+    border-radius: 10px;
+    background: #fafafa;
+    cursor: pointer;
+    font-size: 15px;
+    color: #333;
+    text-align: center;
+    transition: all 0.18s;
+}
+
+.option-btn:hover {
+    border-color: #5c6bc0;
+    background: #e8eaf6;
+}
+
+.option-btn:active {
+    transform: scale(0.97);
+}
+
+/* 答对 */
+.option-btn.correct {
+    background: #c8e6c9 !important;
+    border-color: #4caf50 !important;
+    color: #1b5e20 !important;
+    font-weight: 600;
+}
+
+/* 答错 */
+.option-btn.wrong {
+    background: #ffcdd2 !important;
+    border-color: #f44336 !important;
+    color: #b71c1c !important;
+}
+
+/* 已答题全部禁用 */
+.question.done .option-btn {
+    cursor: default;
+    opacity: 0.75;
+}
+
+.question.done .option-btn.correct {
+    opacity: 1;
+}
+
+.question.done .option-btn.wrong {
+    opacity: 0.7;
+}
+
+/* ===== 结果面板 ===== */
+.result-panel {
+    text-align: center;
+    background: #fff;
+    padding: 24px;
+    border-radius: 14px;
+    box-shadow: 0 2px 12px rgba(0,0,0,0.06);
+    margin-top: 20px;
+    display: none;
+}
+
+.result-panel.show {
+    display: block;
+    animation: fadeUp 0.4s ease;
+}
+
+@keyframes fadeUp {
+    from { opacity: 0; transform: translateY(12px); }
+    to   { opacity: 1; transform: translateY(0); }
+}
+
+.result-panel h2 {
+    font-size: 22px;
+    color: #333;
+    margin-bottom: 12px;
+}
+
+.result-stats {
+    display: flex;
+    justify-content: center;
+    gap: 32px;
+    flex-wrap: wrap;
+    margin-bottom: 16px;
+}
+
+.stat-item {
+    text-align: center;
+}
+
+.stat-value {
+    font-size: 32px;
+    font-weight: 700;
+    color: #5c6bc0;
+}
+
+.stat-label {
+    font-size: 13px;
+    color: #888;
+    margin-top: 2px;
+}
+
+.result-grade {
+    font-size: 18px;
+    font-weight: 600;
+    margin-top: 8px;
+    padding: 8px 20px;
+    border-radius: 20px;
+    display: inline-block;
+}
+
+.grade-perfect  { background: #c8e6c9; color: #1b5e20; }
+.grade-excellent { background: #c8e6c9; color: #2e7d32; }
+.grade-good      { background: #fff9c4; color: #f57f17; }
+.grade-fair      { background: #ffe0b2; color: #e65100; }
+.grade-poor      { background: #ffcdd2; color: #b71c1c; }
+
+/* ===== 页脚 ===== */
+.footer {
+    text-align: center;
+    margin-top: 30px;
+    color: #aaa;
+    font-size: 12px;
+}
+</style>
+</head>
+<body>
+
+<div class="container">
+
+    <!-- 头部 -->
+    <div class="header">
+        <h1>📝 英语单词抽测</h1>
+        <div class="subtitle">随机抽题 · 点击作答 · 即时判分</div>
+    </div>
+
+    <!-- 控制栏 -->
+    <div class="control-bar">
+        <label for="countSelect">题量：</label>
+        <select id="countSelect">
+            <option value="10">10 题</option>
+            <option value="15" selected>15 题</option>
+            <option value="20">20 题</option>
+            <option value="30">30 题</option>
+            <option value="50">50 题</option>
+        </select>
+        <button class="btn-start" onclick="restart()">🔄 生成试卷</button>
+        <button class="btn-home" onclick="location.href='index.html'">🏠 返回首页</button>
+    </div>
+
+    <!-- 进度条 -->
+    <div class="progress-wrap">
+        <div class="progress-text" id="progressText">未开始</div>
+        <div class="progress-bar">
+            <div class="progress-fill" id="progressFill"></div>
+        </div>
+    </div>
+
+    <!-- 题目区 -->
+    <div id="quiz"></div>
+
+    <!-- 结果面板 -->
+    <div class="result-panel" id="resultPanel">
+        <h2 id="resultTitle"></h2>
+        <div class="result-stats">
+            <div class="stat-item">
+                <div class="stat-value" id="statTotal">0</div>
+                <div class="stat-label">总题数</div>
+            </div>
+            <div class="stat-item">
+                <div class="stat-value" id="statCorrect">0</div>
+                <div class="stat-label">答对</div>
+            </div>
+            <div class="stat-item">
+                <div class="stat-value" id="statRate">0%</div>
+                <div class="stat-label">正确率</div>
+            </div>
+        </div>
+        <div class="result-grade" id="resultGrade"></div>
+    </div>
+
+    <div class="footer">StudyClick · 点击式学习系统</div>
+
+</div>
+
+<script>
+// ============================================================
+//  单词库（英语单词 → 中文释义）
+//  每项格式：["英文单词", "中文释义"]
+//  可在此数组中自由增删词条
+// ============================================================
+const WORD_BANK = [
+["narrow","窄的"],
+["obey","服从"],
+["Pacific","太平洋"],
+["quarter","四分之一"],
+["nation","民族"],
+["observe","观察"],
+["queen","女王"],
+["uniform","制服"],
+["various","各种各样的"],
+["national","国家的"],
+["occupation","职业"],
+["railway","铁路"],
+["victory","胜利"],
+["nationality","国籍"],
+["ocean","海洋"],
+["raise","举起"],
+["united","联合的"],
+["native","本土的"],
+["widen","拓宽"],
+["librarian","图书管理员"],
+["opposite","对面"],
+["passport","护照"],
+["within","在…内"],
+["licence","执照"],
+["ordinary","普通的"],
+["patient","病人"],
+["rid","摆脱"],
+["search","搜寻"],
+["organization","组织"],
+["seaside","海边"],
+["medical","医学的"],
+["organize","组织"],
+["through","穿过"],
+["likely","可能的"],
+["medium","中等的"],
+["novel","小说"],
+["outdoor","户外的"],
+["throughout","遍及"],
+["wound","伤口"],
+["secretary","秘书"],
+["wounded","受伤的"],
+["percent","百分之…"],
+["roast","烤"],
+["section","部门"],
+["wisdom","智慧"],
+["memory","记忆"],
+["perfect","完美的"],
+["thus","因此"],
+["wise","明智的"],
+["liquid","液体"],
+["performance","表演"],
+["robot","机器人"],
+["tidy","整洁的"],
+["litter","垃圾"],
+["metal","金属"],
+["physical","身体的"],
+["rocket","火箭"],
+["senior","高级的"],
+["local","当地的"],
+["method","方法"],
+["physics","物理"],
+["root","根"],
+["sense","感觉"],
+["locate","定位"],
+["metre","米"],
+["sentence","句子"],
+["till","直到"],
+["location","位置"],
+["offer","提供"],
+["painter","画家"],
+["mile","英里"],
+["painting","画"],
+["series","系列"],
+["mind","介意"],
+["wild","野生的"],
+["thick","厚的"],
+["wolf","狼"],
+["ought","应该"],
+["rise","升起"],
+["wing","翅膀"],
+["oven","烤箱"],
+["per","每"],
+["number","数字"],
+["Thursday","周四"],
+["lip","嘴唇"],
+["owner","主人"],
+["seem","似乎"],
+["list","清单"],
+["message","消息"],
+["person","人"],
+["rock","岩石"],
+["send","发送"],
+["tie","系"],
+["without","没有"],
+["rope","绳子"],
+["piece","片"],
+["main","主要的"],
+["order","命令"],
+["nor","也不"],
+["past","过去"]
+];
+
+// ============================================================
+//  全局状态
+// ============================================================
+let QUESTION_COUNT = 15;
+let quizData = [];
+let answeredCount = 0;
+let correctCount = 0;
+
+// ============================================================
+//  工具函数
+// ============================================================
+function shuffle(arr) {
+    const a = [...arr];
+    for (let i = a.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [a[i], a[j]] = [a[j], a[i]];
+    }
+    return a;
+}
+
+function pickWrongDefs(correctDef, n) {
+    const pool = WORD_BANK
+        .filter(w => w[1] !== correctDef)
+        .map(w => w[1]);
+    const unique = [...new Set(pool)];
+    if (unique.length <= n) return unique;
+    return shuffle(unique).slice(0, n);
+}
+
+// ============================================================
+//  单词朗读（英式口音 × 3 遍）
+// ============================================================
+function speakWord(word) {
+    if (!window.speechSynthesis) return;
+
+    window.speechSynthesis.cancel();
+
+    var selectedVoice = null;
+    var voices = window.speechSynthesis.getVoices();
+    if (voices.length === 0) {
+        window.speechSynthesis.onvoiceschanged = function() {
+            var v = window.speechSynthesis.getVoices();
+            selectedVoice = v.find(function(x) { return x.lang.startsWith('en-GB'); }) || null;
+        };
+    } else {
+        selectedVoice = voices.find(function(x) { return x.lang.startsWith('en-GB'); }) || null;
+    }
+
+    var repeatCount = 0;
+    var maxRepeats = 1;
+
+    function speakOnce() {
+        if (repeatCount >= maxRepeats) return;
+        var utter = new SpeechSynthesisUtterance(word);
+        utter.lang = 'en-GB';
+        utter.volume = 1;
+        utter.rate = 1;
+        utter.pitch = 1;
+        if (selectedVoice) utter.voice = selectedVoice;
+        utter.onend = speakOnce;
+        repeatCount++;
+        window.speechSynthesis.speak(utter);
+    }
+
+    speakOnce();
+}
+
+// ============================================================
+//  题量变更
+// ============================================================
+function changeCount() {
+    const sel = document.getElementById('countSelect');
+    QUESTION_COUNT = parseInt(sel.value);
+    restart();
+}
+
+// ============================================================
+//  加载试卷
+// ============================================================
+function loadQuiz() {
+    const quizEl = document.getElementById('quiz');
+    const resultPanel = document.getElementById('resultPanel');
+    const progressText = document.getElementById('progressText');
+    const progressFill = document.getElementById('progressFill');
+
+    quizEl.innerHTML = '';
+    resultPanel.classList.remove('show');
+    answeredCount = 0;
+    correctCount = 0;
+    progressText.textContent = '0 / ' + QUESTION_COUNT;
+    progressFill.style.width = '0%';
+
+    const selected = shuffle(WORD_BANK).slice(0, Math.min(QUESTION_COUNT, WORD_BANK.length));
+    const actualCount = selected.length;
+
+    quizData = selected.map(([word, correctDef]) => {
+        const wrongs = pickWrongDefs(correctDef, 4);
+        const options = shuffle([correctDef, ...wrongs]);
+        return { word, correctDef, options };
+    });
+
+    quizData.forEach((q, idx) => {
+        const qDiv = document.createElement('div');
+        qDiv.className = 'question';
+        qDiv.id = 'q-' + idx;
+
+        const titleDiv = document.createElement('div');
+        titleDiv.className = 'q-title';
+        titleDiv.innerHTML = '<span class="q-num">' + (idx + 1) + '</span><span class="q-word">' + q.word + '</span>';
+
+        const optGrid = document.createElement('div');
+        optGrid.className = 'options-grid';
+
+        q.options.forEach(function(opt) {
+            const btn = document.createElement('button');
+            btn.className = 'option-btn';
+            btn.textContent = opt;
+
+            btn.addEventListener('click', function() {
+                handleAnswer(idx, opt, qDiv, optGrid);
+            });
+
+            optGrid.appendChild(btn);
+        });
+
+        qDiv.appendChild(titleDiv);
+        qDiv.appendChild(optGrid);
+        quizEl.appendChild(qDiv);
+    });
+
+    progressText.textContent = '0 / ' + actualCount;
+}
+
+// ============================================================
+//  作答处理
+// ============================================================
+function handleAnswer(idx, chosen, qDiv, optGrid) {
+    if (qDiv.classList.contains('done')) return;
+
+    const q = quizData[idx];
+    speakWord(q.word);  // 点击即朗读单词（英式 × 3 遍）
+    const buttons = optGrid.querySelectorAll('.option-btn');
+
+    buttons.forEach(function(btn) {
+        btn.disabled = true;
+        if (btn.textContent === q.correctDef) {
+            btn.classList.add('correct');
+        }
+    });
+
+    if (chosen === q.correctDef) {
+        correctCount++;
+    } else {
+        buttons.forEach(function(btn) {
+            if (btn.textContent === chosen) {
+                btn.classList.add('wrong');
+            }
+        });
+    }
+
+    qDiv.classList.add('done');
+    answeredCount++;
+
+    const progressText = document.getElementById('progressText');
+    const progressFill = document.getElementById('progressFill');
+    const total = quizData.length;
+    progressText.textContent = answeredCount + ' / ' + total;
+    progressFill.style.width = (answeredCount / total * 100) + '%';
+
+    if (answeredCount === total) {
+        setTimeout(showResult, 300);
+    }
+}
+
+// ============================================================
+//  结果展示
+// ============================================================
+function showResult() {
+    const total = quizData.length;
+    const rate = Math.round(correctCount / total * 100);
+
+    document.getElementById('statTotal').textContent = total;
+    document.getElementById('statCorrect').textContent = correctCount;
+    document.getElementById('statRate').textContent = rate + '%';
+
+    var gradeText, gradeClass;
+    if (rate === 100)      { gradeText = '🏆 满分！太厉害了！'; gradeClass = 'grade-perfect'; }
+    else if (rate >= 90)   { gradeText = '🌟 优秀！继续保持！'; gradeClass = 'grade-excellent'; }
+    else if (rate >= 70)   { gradeText = '👍 良好，还有进步空间'; gradeClass = 'grade-good'; }
+    else if (rate >= 60)   { gradeText = '📚 及格，继续加油'; gradeClass = 'grade-fair'; }
+    else                   { gradeText = '💪 加油，多练习就会进步'; gradeClass = 'grade-poor'; }
+
+    document.getElementById('resultTitle').textContent = '📊 测试结果';
+    const gradeEl = document.getElementById('resultGrade');
+    gradeEl.textContent = gradeText;
+    gradeEl.className = 'result-grade ' + gradeClass;
+
+    document.getElementById('resultPanel').classList.add('show');
+
+    document.getElementById('resultPanel').scrollIntoView({ behavior: 'smooth', block: 'center' });
+}
+
+// ============================================================
+//  重新生成试卷
+// ============================================================
+function restart() {
+    const sel = document.getElementById('countSelect');
+    QUESTION_COUNT = parseInt(sel.value);
+    loadQuiz();
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+
+// ============================================================
+//  绑定事件 & 自动启动
+// ============================================================
+document.getElementById('countSelect').addEventListener('change', changeCount);
+loadQuiz();
+</script>
+
+</body>
+</html>

@@ -1,0 +1,284 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+<meta charset="UTF-8">
+<title>英语单词测试</title>
+
+<style>
+/* ===== 全局 ===== */
+body {
+    font-family: "Segoe UI", Arial;
+    background: linear-gradient(135deg, #e3f2fd, #fce4ec);
+    margin: 0;
+    padding: 20px;
+}
+
+/* 容器 */
+.container {
+    max-width: 800px;
+    margin: auto;
+}
+
+/* 标题 */
+h1 {
+    text-align: center;
+    color: #333;
+    margin-bottom: 25px;
+}
+
+/* 题量选择 */
+#questionCount {
+    text-align: center;
+    margin-bottom: 20px;
+    font-size: 16px;
+}
+
+#questionCount select {
+    padding: 8px 12px;
+    border-radius: 8px;
+    border: 1px solid #ccc;
+    font-size: 15px;
+    outline: none;
+}
+
+/* ===== 卡片 ===== */
+.question {
+    background: #fff;
+    padding: 18px;
+    margin-bottom: 15px;
+    border-radius: 12px;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+    transition: 0.2s;
+}
+
+.question:hover {
+    transform: translateY(-2px);
+}
+
+/* ===== 选项 ===== */
+.options button {
+    display: block;
+    width: 100%;
+    margin: 8px 0;
+    padding: 12px;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    background: #f1f3f5;
+    transition: all 0.2s;
+    font-size: 15px;
+}
+
+.options button:hover {
+    background: #e0e0e0;
+}
+
+/* 正确 / 错误 */
+.correct {
+    background: #4CAF50 !important;
+    color: #fff;
+}
+
+.wrong {
+    background: #f44336 !important;
+    color: #fff;
+}
+
+/* ===== 控制按钮 ===== */
+#controls {
+    text-align: center;
+    margin-top: 20px;
+}
+
+#controls button {
+    margin: 5px;
+    padding: 10px 18px;
+    border: none;
+    border-radius: 20px;
+    cursor: pointer;
+    background: #1976d2;
+    color: white;
+    font-size: 14px;
+    transition: 0.2s;
+}
+
+#controls button:hover {
+    background: #1565c0;
+}
+
+/* ===== 结果 ===== */
+#result {
+    text-align: center;
+    font-size: 20px;
+    margin-top: 25px;
+    font-weight: bold;
+    color: #333;
+}
+</style>
+
+</head>
+<body>
+
+<div class="container">
+
+<h1>📘 英语单词测试</h1>
+
+<!-- 题量选择 -->
+<div id="questionCount">
+    请选择题量：
+    <select id="countSelect" onchange="changeCount()">
+        <option value="10">10 题</option>
+        <option value="15">15 题</option>
+        <option value="20">20 题</option>
+        <option value="30">30 题</option>
+    </select>
+</div>
+
+<div id="quiz"></div>
+<div id="result"></div>
+
+<div id="controls">
+    <button onclick="restart()">🔁 再来一套</button>
+    <button onclick="location.href='../index.html'">🏠 返回首页</button>
+</div>
+
+</div>
+
+<script>
+const WORDS = [
+["lab","实验室"],
+["machine","机器"],
+["narrow","窄的"],
+["obey","服从"],
+["Pacific","太平洋"],
+["quarter","四分之一"],
+["race","赛跑"],
+["sail","航行"],
+["tap","水龙头"],
+["ugly","丑的"],
+["van","货车"],
+["waiter","服务员"],
+["lady","女士"],
+["madam","夫人"],
+["nation","民族"],
+["observe","观察"],
+["pack","打包"],
+["queen","女王"],
+["radio","收音机"],
+["salad","沙拉"],
+["tape","磁带"],
+["uniform","制服"],
+["various","各种各样的"],
+["waitress","女服务员"],
+["lamp","灯"],
+["magazine","杂志"],
+["national","国家的"],
+["occupation","职业"],
+["railway","铁路"],
+["sale","出售"],
+["task","任务"],
+["unit","单元"],
+["victory","胜利"],
+["wake","醒来"],
+["land","陆地"],
+["nationality","国籍"],
+["ocean","海洋"],
+["pain","疼痛"],
+["raise","举起"],
+["salt","盐"],
+["taste","味道"],
+["united","联合的"],
+["war","战争"],
+["language","语言"],
+["main","主要的"],
+["native","本土的"],
+];
+
+let QUESTION_COUNT = 10;
+
+function shuffle(arr){ return arr.sort(()=>Math.random()-0.5); }
+
+// 选择题量
+function changeCount() {
+    const select = document.getElementById('countSelect');
+    QUESTION_COUNT = parseInt(select.value);
+    restart();
+}
+
+function loadQuiz(){
+    document.getElementById("quiz").innerHTML = "";
+    document.getElementById("result").innerHTML = "";
+
+    let quizData = shuffle([...WORDS]).slice(0, QUESTION_COUNT);
+    let correctCount = 0;
+    let answered = 0;
+
+    quizData.forEach((item, index)=>{
+        let [word, correct] = item;
+
+        let wrongs = shuffle(WORDS.filter(w=>w[1]!==correct))
+            .slice(0,3).map(w=>w[1]);
+
+        let options = shuffle([correct,...wrongs]);
+
+        let qDiv = document.createElement("div");
+        qDiv.className = "question";
+
+        qDiv.innerHTML = `<b>${index+1}. ${word}</b>`;
+
+        let optDiv = document.createElement("div");
+        optDiv.className = "options";
+
+        options.forEach(opt=>{
+            let btn = document.createElement("button");
+            btn.innerText = opt;
+
+            btn.onclick = function(){
+				if(optDiv.classList.contains("done")) return;
+			
+				let buttons = optDiv.querySelectorAll("button");
+			
+				// 1. 先把正确答案标绿（不管点哪个）
+				buttons.forEach(b=>{
+					if(b.innerText === correct){
+						b.classList.add("correct");
+					}
+					b.disabled = true;
+				});
+			
+				// 2. 只给用户“自己点的这个”加红/绿
+				if(opt !== correct){
+					this.classList.add("wrong"); // 选错：自己变红
+				}
+				// 选对：已经在上面标绿了，不用再加
+			
+				optDiv.classList.add("done");
+				if(opt === correct){
+					correctCount++;
+				}
+				answered++;
+			
+				if(answered === quizData.length){
+					let acc = Math.round(correctCount / quizData.length *100);
+					document.getElementById("result").innerHTML =
+						`🎉 完成！ 正确率：${acc}%（${correctCount}/${quizData.length}）`;
+				}
+			};
+
+            optDiv.appendChild(btn);
+        });
+
+        qDiv.appendChild(optDiv);
+        document.getElementById("quiz").appendChild(qDiv);
+    });
+}
+
+function restart(){
+    loadQuiz();
+}
+
+loadQuiz();
+</script>
+
+</body>
+</html>
