@@ -414,5 +414,6 @@ function handleAnswer(idx,chosen,qDiv,og,answer){if(qDiv.classList.contains("don
 function showResult(){let t=QUESTION_COUNT,r=Math.round(correctCount/t*100);document.getElementById("statTotal").textContent=t;document.getElementById("statCorrect").textContent=correctCount;document.getElementById("statRate").textContent=r+"%";let gt,gc;if(r===100){gt="🏆 满分！太厉害了！";gc="grade-perfect"}else if(r>=90){gt="🌟 优秀！继续保持！";gc="grade-excellent"}else if(r>=70){gt="👍 良好，还有进步空间";gc="grade-good"}else if(r>=60){gt="📚 及格，继续加油";gc="grade-fair"}else{gt="💪 加油，多练习就会进步";gc="grade-poor"}document.getElementById("resultTitle").textContent="📊 测试结果";let ge=document.getElementById("resultGrade");ge.textContent=gt;ge.className="result-grade "+gc;document.getElementById("resultPanel").classList.add("show");document.getElementById("resultPanel").scrollIntoView({behavior:"smooth",block:"center"})}
 function restart(){QUESTION_COUNT=parseInt(document.getElementById("countSelect").value);loadQuiz();window.scrollTo({top:0,behavior:"smooth"})}
 document.getElementById("countSelect").addEventListener("change",restart);loadQuiz();
+    </script>
 </body>
 </html>
