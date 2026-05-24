@@ -2,246 +2,87 @@
 <html lang="zh">
 <head>
 <meta charset="UTF-8">
-<title>英语单词测试</title>
-
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>英语单词测试 · 288-388</title>
 <style>
-/* ===== 全局 ===== */
-body {
-    font-family: "Segoe UI", Arial;
-    background: linear-gradient(135deg, #e3f2fd, #fce4ec);
-    margin: 0;
-    padding: 20px;
-}
-
-/* 容器 */
-.container {
-    max-width: 800px;
-    margin: auto;
-}
-
-/* 标题 */
-h1 {
-    text-align: center;
-    color: #333;
-    margin-bottom: 25px;
-}
-
-/* ===== 卡片 ===== */
-.question {
-    background: #fff;
-    padding: 18px;
-    margin-bottom: 15px;
-    border-radius: 12px;
-    box-shadow: 0 4px 12px rgba(0,0,0,0.08);
-    transition: 0.2s;
-}
-
-.question:hover {
-    transform: translateY(-2px);
-}
-
-/* ===== 选项 ===== */
-.options button {
-    display: block;
-    width: 100%;
-    margin: 8px 0;
-    padding: 12px;
-    border: none;
-    border-radius: 8px;
-    cursor: pointer;
-    background: #f1f3f5;
-    transition: all 0.2s;
-    font-size: 15px;
-}
-
-.options button:hover {
-    background: #e0e0e0;
-}
-
-/* 正确 / 错误 */
-.correct {
-    background: #4CAF50 !important;
-    color: #fff;
-}
-
-.wrong {
-    background: #f44336 !important;
-    color: #fff;
-}
-
-/* ===== 控制按钮 ===== */
-#controls {
-    text-align: center;
-    margin-top: 20px;
-}
-
-#controls button {
-    margin: 5px;
-    padding: 10px 18px;
-    border: none;
-    border-radius: 20px;
-    cursor: pointer;
-    background: #1976d2;
-    color: white;
-    font-size: 14px;
-    transition: 0.2s;
-}
-
-#controls button:hover {
-    background: #1565c0;
-}
-
-/* ===== 结果 ===== */
-#result {
-    text-align: center;
-    font-size: 20px;
-    margin-top: 25px;
-    font-weight: bold;
-    color: #333;
-}
-
-/* ===== 错题本 ===== */
-#wrongBox {
-    background: #fff;
-    margin-top: 25px;
-    padding: 18px;
-    border-radius: 12px;
-    box-shadow: 0 4px 12px rgba(0,0,0,0.08);
-}
-
-#wrongBox h3 {
-    margin-top: 0;
-}
-
-#wrongList li {
-    margin: 5px 0;
-    padding: 6px 10px;
-    background: #f8f9fa;
-    border-radius: 6px;
-}
+* { box-sizing: border-box; margin: 0; padding: 0; }
+body { font-family: "Segoe UI", "Microsoft YaHei", sans-serif; background: linear-gradient(135deg, #e8eaf6 0%, #fce4ec 50%, #e0f2f1 100%); min-height: 100vh; padding: 20px; }
+.container { max-width: 780px; margin: 0 auto; }
+.header { text-align: center; padding: 30px 20px 20px; }
+.header h1 { font-size: 28px; color: #333; margin-bottom: 6px; }
+.header .subtitle { color: #888; font-size: 13px; }
+.control-bar { display: flex; align-items: center; justify-content: center; gap: 12px; margin-bottom: 20px; flex-wrap: wrap; }
+.control-bar label { font-size: 15px; color: #555; font-weight: 500; }
+.control-bar select { padding: 8px 14px; border: 1px solid #ccc; border-radius: 10px; font-size: 15px; background: #fff; cursor: pointer; outline: none; }
+.control-bar select:focus { border-color: #5c6bc0; }
+.control-bar button { padding: 9px 22px; border: none; border-radius: 20px; font-size: 14px; cursor: pointer; font-weight: 500; transition: all 0.2s; }
+.btn-start { background: #5c6bc0; color: #fff; } .btn-start:hover { background: #3f51b5; }
+.btn-home { background: #78909c; color: #fff; } .btn-home:hover { background: #546e7a; }
+.progress-wrap { margin-bottom: 20px; }
+.progress-text { font-size: 13px; color: #666; margin-bottom: 4px; text-align: center; }
+.progress-bar { height: 6px; background: #e0e0e0; border-radius: 3px; overflow: hidden; }
+.progress-fill { height: 100%; background: linear-gradient(90deg, #5c6bc0, #26c6da); border-radius: 3px; transition: width 0.3s ease; width: 0%; }
+.question { background: #fff; padding: 18px 20px; margin-bottom: 14px; border-radius: 14px; box-shadow: 0 2px 12px rgba(0,0,0,0.06); }
+.question:hover { box-shadow: 0 4px 20px rgba(0,0,0,0.10); }
+.question .q-title { font-size: 18px; font-weight: 600; color: #333; margin-bottom: 12px; display: flex; align-items: center; gap: 8px; }
+.q-num { display: inline-flex; align-items: center; justify-content: center; width: 28px; height: 28px; border-radius: 50%; background: #e8eaf6; color: #5c6bc0; font-size: 13px; font-weight: 700; flex-shrink: 0; }
+.q-word { color: #1a237e; }
+.options-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+@media (max-width: 500px) { .options-grid { grid-template-columns: 1fr; } }
+.option-btn { display: block; width: 100%; padding: 11px 14px; border: 2px solid #e0e0e0; border-radius: 10px; background: #fafafa; cursor: pointer; font-size: 15px; color: #333; text-align: center; transition: all 0.18s; }
+.option-btn:hover { border-color: #5c6bc0; background: #e8eaf6; }
+.option-btn:active { transform: scale(0.97); }
+.option-btn.correct { background: #c8e6c9 !important; border-color: #4caf50 !important; color: #1b5e20 !important; font-weight: 600; }
+.option-btn.wrong { background: #ffcdd2 !important; border-color: #f44336 !important; color: #b71c1c !important; }
+.question.done .option-btn { cursor: default; opacity: 0.75; }
+.question.done .option-btn.correct { opacity: 1; }
+.question.done .option-btn.wrong { opacity: 0.7; }
+.result-panel { text-align: center; background: #fff; padding: 24px; border-radius: 14px; box-shadow: 0 2px 12px rgba(0,0,0,0.06); margin-top: 20px; display: none; }
+.result-panel.show { display: block; animation: fadeUp 0.4s ease; }
+@keyframes fadeUp { from { opacity: 0; transform: translateY(12px); } to { opacity: 1; transform: translateY(0); } }
+.result-panel h2 { font-size: 22px; color: #333; margin-bottom: 12px; }
+.result-stats { display: flex; justify-content: center; gap: 32px; flex-wrap: wrap; margin-bottom: 16px; }
+.stat-item { text-align: center; } .stat-value { font-size: 32px; font-weight: 700; color: #5c6bc0; } .stat-label { font-size: 13px; color: #888; margin-top: 2px; }
+.result-grade { font-size: 18px; font-weight: 600; margin-top: 8px; padding: 8px 20px; border-radius: 20px; display: inline-block; }
+.grade-perfect { background: #c8e6c9; color: #1b5e20; } .grade-excellent { background: #c8e6c9; color: #2e7d32; }
+.grade-good { background: #fff9c4; color: #f57f17; } .grade-fair { background: #ffe0b2; color: #e65100; } .grade-poor { background: #ffcdd2; color: #b71c1c; }
+.wrong-book { background: #fff; padding: 18px; border-radius: 14px; box-shadow: 0 2px 12px rgba(0,0,0,0.06); margin-top: 20px; }
+.wrong-book h3 { margin-bottom: 10px; color: #333; }
+.wrong-book ul { list-style: none; padding: 0; }
+.wrong-book li { padding: 6px 10px; margin: 4px 0; background: #f5f5f5; border-radius: 6px; font-size: 14px; }
+.wrong-book .btn-clear { padding: 6px 14px; border: none; border-radius: 14px; background: #ef5350; color: #fff; cursor: pointer; font-size: 13px; margin-top: 8px; }
+.wrong-book .btn-clear:hover { background: #d32f2f; }
+.footer { text-align: center; margin-top: 30px; color: #aaa; font-size: 12px; }
 </style>
-
 </head>
 <body>
-
 <div class="container">
-
-<h1>📘 英语单词测试</h1>
-
+<div class="header"><h1>📘 英语单词测试 · 288-388</h1><div class="subtitle">288-388 · 随机抽题 · 点击作答 · 即时判分</div></div>
+<div class="control-bar">
+<label for="countSelect">题量：</label>
+<select id="countSelect"><option value="10" selected>10 题</option><option value="15">15 题</option><option value="20">20 题</option><option value="30">30 题</option></select>
+<button class="btn-start" onclick="restart()">🔄 生成试卷</button>
+</div>
+<div class="progress-wrap"><div class="progress-text" id="progressText">未开始</div><div class="progress-bar"><div class="progress-fill" id="progressFill"></div></div></div>
 <div id="quiz"></div>
-<div id="result"></div>
-
-<div id="controls">
-    <button onclick="restart()">🔁 再来一套</button>
-    <button onclick="location.href='../index.html'">🏠 返回首页</button>
+<div class="result-panel" id="resultPanel"><h2 id="resultTitle"></h2><div class="result-stats"><div class="stat-item"><div class="stat-value" id="statTotal">0</div><div class="stat-label">总题数</div></div><div class="stat-item"><div class="stat-value" id="statCorrect">0</div><div class="stat-label">答对</div></div><div class="stat-item"><div class="stat-value" id="statRate">0%</div><div class="stat-label">正确率</div></div></div><div class="result-grade" id="resultGrade"></div></div>
+<div class="wrong-book"><h3>📚 错题本</h3><ul id="wrongList"><li style="color:#888">暂无错题</li></ul><button class="btn-clear" onclick="clearWrong()">🗑 清空错题本</button></div>
+<div class="footer"><button class="btn-home" onclick="location.href='../index.html'">🏠 返回首页</button>&nbsp;StudyClick · 点击式学习系统</div>
 </div>
-
-</div>
-
 <script>
-const WORDS = [
+const WORD_BANK = [
 ["chemical","化学的"],["destroy","破坏"],["finger","手指"],["harbour","港口"],["army","军队"],["bottom","底部"],["customer","顾客"],["design","设计"],["experiment","实验"],["headache","头痛"],["chance","机遇"],["distance","距离"],["eager","渴望的"],["forgetful","健忘的"],["humour","幽默"],["aim","目的"],["bar","酒吧"],["circle","圆"],["energy","能量"],["honey","蜂蜜"],["area","地区"],["college","学院"],["equal","等于"],["familiar","熟悉的"],["hope","希望"],["bridge","桥"],["cheer","欢呼"],["deserve","值得"],["explore","探索"],["field","田地"],["businessman","商人"],["concert","音乐会"],["accurately","精确地"],["block","街区"],["case","案件"],["delay","耽搁"],["exhibition","展览"],["furniture","家具"],["hamburger","汉堡包"],["against","反对"],["bell","钟"],["decide","决定"],["excuse","原谅"],["female","女性"],["honest","诚实的"],["average","平均"],["bone","骨头"],["calculator","计算器"],["electricity","电"],["amusing","有趣的"],["believe","相信"],["cabbage","卷心菜"],["discuss","讨论"],["the Atlantic","大西洋"],["Canada","加拿大"],["dishonest","不诚实"],["exam","考试"],["frozen","冰冻的"],["honesty","诚实"],["bill","账单"],["dialogue","对话"],["especially","特别地"],["fact","事实"],["hole","洞"],["addition","增加"],["blind","盲人"],["clap","拍手"],["foreigner","外国人"],["automatic","自动的"],["button","按钮"],["celebrate","庆祝"],["escape","逃跑"],["fight","打仗"],["host","主人"],["adopt","采用"],["continent","洲"],["downstairs","在楼下"],["electric","电的"],["fear","恐惧"],["achieve","实现"],["blanket","毯子"],["congratulation","祝贺"],["except","除……以外"],["forest","森林"],["hat","帽子"],["award","奖品"],["detective","侦探"],["England","英格兰"],["Air","-conditioner空调"],["besides","除了"],["cinema","电影院"],["display","陈列"],["elementary","初级的"],["follow","听从"],["hit","打击"],["attack","进攻"],["coast","海岸"],["discover","发现"],["estate","住宅区"],["flash","闪光"],["figure","数字"],
 ];
-
-const QUESTION_COUNT = 10;
-
+let QUESTION_COUNT = 10, quizData = [], correctCount = 0, answeredCount = 0;
 let wrongBook = JSON.parse(localStorage.getItem("wrongBook") || "[]");
-
-function shuffle(arr){ return arr.sort(()=>Math.random()-0.5); }
-
-function renderWrong(){
-    const list = document.getElementById("wrongList");
-    list.innerHTML = "";
-    wrongBook.forEach(w=>{
-        let li = document.createElement("li");
-        li.innerText = `${w[0]} - ${w[1]}`;
-        list.appendChild(li);
-    });
-}
-
-function clearWrong(){
-    wrongBook = [];
-    localStorage.removeItem("wrongBook");
-    renderWrong();
-}
-
-function loadQuiz(){
-    document.getElementById("quiz").innerHTML = "";
-    document.getElementById("result").innerHTML = "";
-
-    let quizData = shuffle([...WORDS]).slice(0, QUESTION_COUNT);
-    let correctCount = 0;
-    let answered = 0;
-
-    quizData.forEach((item, index)=>{
-        let [word, correct] = item;
-
-        let wrongs = shuffle(WORDS.filter(w=>w[1]!==correct))
-            .slice(0,4).map(w=>w[1]);
-
-        let options = shuffle([correct,...wrongs]);
-
-        let qDiv = document.createElement("div");
-        qDiv.className = "question";
-
-        qDiv.innerHTML = `<b>${index+1}. ${word}</b>`;
-
-        let optDiv = document.createElement("div");
-        optDiv.className = "options";
-
-        options.forEach(opt=>{
-            let btn = document.createElement("button");
-            btn.innerText = opt;
-
-            btn.onclick = function(){
-                if(optDiv.classList.contains("done")) return;
-
-                let buttons = optDiv.querySelectorAll("button");
-
-                buttons.forEach(b=>{
-                    if(b.innerText === correct){
-                        b.classList.add("correct");
-                    }
-                    b.disabled = true;
-                });
-
-                if(opt !== correct){
-                    btn.classList.add("wrong");
-
-                    if(!wrongBook.some(w=>w[0]===word)){
-                        wrongBook.push([word, correct]);
-                        localStorage.setItem("wrongBook", JSON.stringify(wrongBook));
-                        renderWrong();
-                    }
-                } else {
-                    correctCount++;
-                }
-
-                optDiv.classList.add("done");
-                answered++;
-
-                if(answered === quizData.length){
-                    let acc = Math.round(correctCount / quizData.length *100);
-                    document.getElementById("result").innerHTML =
-                        `🎉 完成！ 正确率：${acc}%（${correctCount}/${quizData.length}）`;
-                }
-            };
-
-            optDiv.appendChild(btn);
-        });
-
-        qDiv.appendChild(optDiv);
-        document.getElementById("quiz").appendChild(qDiv);
-    });
-}
-
-function restart(){
-    loadQuiz();
-}
-
-loadQuiz();
-renderWrong();
+function shuffle(a){let r=[...a];for(let i=r.length-1;i>0;i--){let j=Math.floor(Math.random()*(i+1));[r[i],r[j]]=[r[j],r[i]]}return r}
+function renderWrong(){let l=document.getElementById("wrongList");if(wrongBook.length===0){l.innerHTML='<li style="color:#888">暂无错题</li>';return}l.innerHTML=wrongBook.map(w=>`<li>${w[0]} — ${w[1]}</li>`).join('')}
+function clearWrong(){wrongBook=[];localStorage.removeItem("wrongBook");renderWrong()}
+function loadQuiz(){document.getElementById("quiz").innerHTML="";document.getElementById("resultPanel").classList.remove("show");document.getElementById("progressText").textContent="0 / "+QUESTION_COUNT;document.getElementById("progressFill").style.width="0%";quizData=shuffle(WORD_BANK).slice(0,QUESTION_COUNT);correctCount=0;answeredCount=0;let qe=document.getElementById("quiz");quizData.forEach((item,idx)=>{let[word,correctDef]=item;let wrongs=shuffle(WORD_BANK.filter(w=>w[1]!==correctDef)).slice(0,3).map(w=>w[1]);let opts=shuffle([correctDef,...wrongs]);let qDiv=document.createElement("div");qDiv.className="question";let td=document.createElement("div");td.className="q-title";td.innerHTML=`<span class="q-num">${idx+1}</span><span class="q-word">${word}</span>`;qDiv.appendChild(td);let og=document.createElement("div");og.className="options-grid";opts.forEach(opt=>{let btn=document.createElement("button");btn.className="option-btn";btn.textContent=opt;btn.addEventListener("click",()=>handleAnswer(idx,opt,qDiv,og,word,correctDef));og.appendChild(btn)});qDiv.appendChild(og);qe.appendChild(qDiv)})}
+function handleAnswer(idx,chosen,qDiv,og,word,correctDef){if(qDiv.classList.contains("done"))return;let btns=og.querySelectorAll(".option-btn");btns.forEach(btn=>{btn.disabled=true;if(btn.textContent===correctDef)btn.classList.add("correct")});if(chosen!==correctDef){btns.forEach(btn=>{if(btn.textContent===chosen)btn.classList.add("wrong")});if(!wrongBook.some(w=>w[0]===word)){wrongBook.push([word,correctDef]);localStorage.setItem("wrongBook",JSON.stringify(wrongBook));renderWrong()}}else{correctCount++}qDiv.classList.add("done");answeredCount++;let pt=document.getElementById("progressText"),pf=document.getElementById("progressFill");pt.textContent=answeredCount+" / "+QUESTION_COUNT;pf.style.width=(answeredCount/QUESTION_COUNT*100)+"%";if(answeredCount===QUESTION_COUNT)setTimeout(showResult,300)}
+function showResult(){let t=QUESTION_COUNT,r=Math.round(correctCount/t*100);document.getElementById("statTotal").textContent=t;document.getElementById("statCorrect").textContent=correctCount;document.getElementById("statRate").textContent=r+"%";let gt,gc;if(r===100){gt="🏆 满分！太厉害了！";gc="grade-perfect"}else if(r>=90){gt="🌟 优秀！继续保持！";gc="grade-excellent"}else if(r>=70){gt="👍 良好，还有进步空间";gc="grade-good"}else if(r>=60){gt="📚 及格，继续加油";gc="grade-fair"}else{gt="💪 加油，多练习就会进步";gc="grade-poor"}document.getElementById("resultTitle").textContent="📊 测试结果";let ge=document.getElementById("resultGrade");ge.textContent=gt;ge.className="result-grade "+gc;document.getElementById("resultPanel").classList.add("show");document.getElementById("resultPanel").scrollIntoView({behavior:"smooth",block:"center"})}
+function restart(){QUESTION_COUNT=parseInt(document.getElementById("countSelect").value);loadQuiz();window.scrollTo({top:0,behavior:"smooth"})}
+document.getElementById("countSelect").addEventListener("change",restart);loadQuiz();renderWrong();
 </script>
-
 </body>
 </html>

@@ -1,21 +1,42 @@
-<textarea id="input" style="width:100%;height:150px;"></textarea>
-<button onclick="convert()">转换</button>
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>英语词表转换工具</title>
+<style>
+* { box-sizing: border-box; margin: 0; padding: 0; }
+body { font-family: "Segoe UI", "Microsoft YaHei", sans-serif; background: linear-gradient(135deg, #e8eaf6 0%, #fce4ec 50%, #e0f2f1 100%); min-height: 100vh; padding: 20px; }
+.container { max-width: 780px; margin: 0 auto; }
+.header { text-align: center; padding: 30px 20px 20px; }
+.header h1 { font-size: 24px; color: #333; margin-bottom: 6px; }
+.header .subtitle { color: #888; font-size: 13px; margin-bottom: 30px; }
+textarea { width: 100%; height: 150px; padding: 12px; border: 1px solid #ccc; border-radius: 10px; font-size: 14px; font-family: monospace; resize: vertical; margin-bottom: 12px; }
+button { padding: 10px 24px; border: none; border-radius: 20px; background: #5c6bc0; color: #fff; font-size: 14px; cursor: pointer; font-weight: 500; margin-bottom: 12px; }
+button:hover { background: #3f51b5; }
+pre { background: #fff; padding: 16px; border-radius: 10px; font-size: 13px; overflow-x: auto; white-space: pre-wrap; word-break: break-all; box-shadow: 0 2px 12px rgba(0,0,0,0.06); }
+.footer { text-align: center; margin-top: 30px; color: #aaa; font-size: 12px; }
+</style>
+</head>
+<body>
+<div class="container">
+<div class="header"><h1>📘 英语词表转换工具</h1><div class="subtitle">将单词列表转为 WORD_BANK 格式</div></div>
+<textarea id="input" placeholder="粘贴单词列表..."></textarea>
+<button onclick="convert()">🔄 转换</button>
 <pre id="output"></pre>
+<div class="footer">StudyClick · 开发工具</div>
+</div>
 
 <script>
 function convert(){
     let text = document.getElementById("input").value;
     let lines = text.split("\n");
     let result = [];
-
     lines.forEach(line=>{
         line = line.replace(/^\d+\.\s*/, "").trim();
         if(!line) return;
-
         let parts = line.split(/\s+/);
-
         let word, meaning;
-
         if(parts.length >= 2){
             word = parts[0];
             meaning = parts.slice(1).join("");
@@ -26,12 +47,12 @@ function convert(){
                 meaning = match[2];
             }
         }
-
         if(word && meaning){
             result.push(`["${word}","${meaning}"],`);
         }
     });
-
     document.getElementById("output").innerText = result.join("\n");
 }
 </script>
+</body>
+</html>

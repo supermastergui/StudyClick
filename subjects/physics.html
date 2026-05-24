@@ -1,0 +1,418 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>初中物理公式自测</title>
+    <style>
+* { box-sizing: border-box; margin: 0; padding: 0; }
+body { font-family: "Segoe UI", "Microsoft YaHei", sans-serif; background: linear-gradient(135deg, #e8eaf6 0%, #fce4ec 50%, #e0f2f1 100%); min-height: 100vh; padding: 20px; }
+.container { max-width: 780px; margin: 0 auto; }
+.header { text-align: center; padding: 30px 20px 20px; }
+.header h1 { font-size: 28px; color: #333; margin-bottom: 6px; }
+.header .subtitle { color: #888; font-size: 13px; }
+.control-bar { display: flex; align-items: center; justify-content: center; gap: 12px; margin-bottom: 20px; flex-wrap: wrap; }
+.control-bar label { font-size: 15px; color: #555; font-weight: 500; }
+.control-bar select { padding: 8px 14px; border: 1px solid #ccc; border-radius: 10px; font-size: 15px; background: #fff; cursor: pointer; outline: none; }
+.control-bar select:focus { border-color: #5c6bc0; }
+.control-bar button { padding: 9px 22px; border: none; border-radius: 20px; font-size: 14px; cursor: pointer; font-weight: 500; transition: all 0.2s; }
+.btn-start { background: #5c6bc0; color: #fff; } .btn-start:hover { background: #3f51b5; }
+.btn-home { background: #78909c; color: #fff; } .btn-home:hover { background: #546e7a; }
+.progress-wrap { margin-bottom: 20px; }
+.progress-text { font-size: 13px; color: #666; margin-bottom: 4px; text-align: center; }
+.progress-bar { height: 6px; background: #e0e0e0; border-radius: 3px; overflow: hidden; }
+.progress-fill { height: 100%; background: linear-gradient(90deg, #5c6bc0, #26c6da); border-radius: 3px; transition: width 0.3s ease; width: 0%; }
+.question { background: #fff; padding: 18px 20px; margin-bottom: 14px; border-radius: 14px; box-shadow: 0 2px 12px rgba(0,0,0,0.06); }
+.question:hover { box-shadow: 0 4px 20px rgba(0,0,0,0.10); }
+.question .q-title { font-size: 18px; font-weight: 600; color: #333; margin-bottom: 12px; display: flex; align-items: center; gap: 8px; }
+.q-num { display: inline-flex; align-items: center; justify-content: center; width: 28px; height: 28px; border-radius: 50%; background: #e8eaf6; color: #5c6bc0; font-size: 13px; font-weight: 700; flex-shrink: 0; }
+.q-word { color: #1a237e; }
+.options-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+@media (max-width: 500px) { .options-grid { grid-template-columns: 1fr; } }
+.option-btn { display: block; width: 100%; padding: 11px 14px; border: 2px solid #e0e0e0; border-radius: 10px; background: #fafafa; cursor: pointer; font-size: 15px; color: #333; text-align: center; transition: all 0.18s; }
+.option-btn:hover { border-color: #5c6bc0; background: #e8eaf6; }
+.option-btn:active { transform: scale(0.97); }
+.option-btn.correct { background: #c8e6c9 !important; border-color: #4caf50 !important; color: #1b5e20 !important; font-weight: 600; }
+.option-btn.wrong { background: #ffcdd2 !important; border-color: #f44336 !important; color: #b71c1c !important; }
+.question.done .option-btn { cursor: default; opacity: 0.75; }
+.question.done .option-btn.correct { opacity: 1; } .question.done .option-btn.wrong { opacity: 0.7; }
+.result-panel { text-align: center; background: #fff; padding: 24px; border-radius: 14px; box-shadow: 0 2px 12px rgba(0,0,0,0.06); margin-top: 20px; display: none; }
+.result-panel.show { display: block; animation: fadeUp 0.4s ease; }
+@keyframes fadeUp { from { opacity: 0; transform: translateY(12px); } to { opacity: 1; transform: translateY(0); } }
+.result-panel h2 { font-size: 22px; color: #333; margin-bottom: 12px; }
+.result-stats { display: flex; justify-content: center; gap: 32px; flex-wrap: wrap; margin-bottom: 16px; }
+.stat-item { text-align: center; } .stat-value { font-size: 32px; font-weight: 700; color: #5c6bc0; } .stat-label { font-size: 13px; color: #888; margin-top: 2px; }
+.result-grade { font-size: 18px; font-weight: 600; margin-top: 8px; padding: 8px 20px; border-radius: 20px; display: inline-block; }
+.grade-perfect { background: #c8e6c9; color: #1b5e20; } .grade-excellent { background: #c8e6c9; color: #2e7d32; }
+.grade-good { background: #fff9c4; color: #f57f17; } .grade-fair { background: #ffe0b2; color: #e65100; } .grade-poor { background: #ffcdd2; color: #b71c1c; }
+.footer { text-align: center; margin-top: 30px; color: #aaa; font-size: 12px; }
+    </style>
+</head>
+<body>
+<div class="container">
+<div class="header"><h1>⚡ 初中物理公式随机自测</h1><div class="subtitle">随机抽题 · 点击作答 · 即时判分（上海教程，g取9.8 N/kg）</div></div>
+<div class="control-bar">
+<label for="countSelect">题量：</label>
+<select id="countSelect"><option value="10" selected>10 题</option><option value="15">15 题</option><option value="20">20 题</option><option value="30">30 题</option></select>
+<button class="btn-start" onclick="restart()">🔄 生成试卷</button>
+</div>
+<div class="progress-wrap"><div class="progress-text" id="progressText">未开始</div><div class="progress-bar"><div class="progress-fill" id="progressFill"></div></div></div>
+<div id="quiz"></div>
+<div class="result-panel" id="resultPanel"><h2 id="resultTitle"></h2><div class="result-stats"><div class="stat-item"><div class="stat-value" id="statTotal">0</div><div class="stat-label">总题数</div></div><div class="stat-item"><div class="stat-value" id="statCorrect">0</div><div class="stat-label">答对</div></div><div class="stat-item"><div class="stat-value" id="statRate">0%</div><div class="stat-label">正确率</div></div></div><div class="result-grade" id="resultGrade"></div></div>
+<div class="footer"><button class="btn-home" onclick="location.href='../index.html'">🏠 返回首页</button>&nbsp;StudyClick · 点击式学习系统</div>
+</div>
+
+    <script>
+        // 初中物理公式题库（上海教程，g=9.8 N/kg）
+        const questionBank = [
+            // ==================== 一、运动学 ====================
+            {
+                q: "速度公式 v = s/t 中，s 表示什么？",
+                a: "路程",
+                options: ["路程", "位移", "时间", "速率"]
+            },
+            {
+                q: "速度的单位是 m/s，换算为 km/h 时 1 m/s 等于多少？",
+                a: "3.6 km/h",
+                options: ["3.6 km/h", "0.28 km/h", "1 km/h", "36 km/h"]
+            },
+            {
+                q: "由 v = s/t 变形求路程的公式是？",
+                a: "s = vt",
+                options: ["s = vt", "s = v/t", "s = t/v", "s = v + t"]
+            },
+            {
+                q: "由 v = s/t 变形求时间的公式是？",
+                a: "t = s/v",
+                options: ["t = s/v", "t = v/s", "t = sv", "t = v - s"]
+            },
+
+            // ==================== 二、密度 ====================
+            {
+                q: "密度公式 ρ = m/V 中，ρ 的国际单位是？",
+                a: "kg/m³",
+                options: ["kg/m³", "g/cm³", "kg/cm³", "g/m³"]
+            },
+            {
+                q: "1 g/cm³ 等于多少 kg/m³？",
+                a: "1×10³ kg/m³",
+                options: ["1×10³ kg/m³", "1×10⁻³ kg/m³", "1 kg/m³", "1×10² kg/m³"]
+            },
+            {
+                q: "由 ρ = m/V 变形求质量的公式是？",
+                a: "m = ρV",
+                options: ["m = ρV", "m = ρ/V", "m = V/ρ", "m = ρ + V"]
+            },
+            {
+                q: "关于密度，下列说法正确的是？",
+                a: "密度是物质的特性，与质量、体积无关",
+                options: ["密度是物质的特性，与质量、体积无关", "质量越大密度越大", "体积越大密度越大", "密度随温度不变"]
+            },
+
+            // ==================== 三、重力 ====================
+            {
+                q: "重力公式 G = mg 中，上海地区 g 取值是？",
+                a: "9.8 N/kg",
+                options: ["9.8 N/kg", "10 N/kg", "9.8 m/s²", "10 m/s²"]
+            },
+            {
+                q: "重力 G = mg 中，m 的单位是？",
+                a: "kg",
+                options: ["kg", "g", "N", "m"]
+            },
+            {
+                q: "重力的方向是？",
+                a: "竖直向下",
+                options: ["竖直向下", "垂直向下", "水平方向", "指向地心"]
+            },
+
+            // ==================== 四、压强 ====================
+            {
+                q: "压强公式 p = F/S 中，p 的单位是？",
+                a: "Pa（帕斯卡）",
+                options: ["Pa（帕斯卡）", "N（牛顿）", "J（焦耳）", "W（瓦特）"]
+            },
+            {
+                q: "液体压强公式是？",
+                a: "p = ρgh",
+                options: ["p = ρgh", "p = F/S", "p = mg/S", "p = ρVg"]
+            },
+            {
+                q: "液体压强公式 p = ρgh 中，h 表示什么？",
+                a: "深度（从液面到该点的竖直距离）",
+                options: ["深度（从液面到该点的竖直距离）", "液体的高度", "容器的高度", "从底部到该点的距离"]
+            },
+            {
+                q: "p = F/S 和 p = ρgh 分别适用于？",
+                a: "p=F/S通用；p=ρgh仅适用于液体压强",
+                options: ["p=F/S通用；p=ρgh仅适用于液体压强", "两者都通用", "p=ρgh通用；p=F/S仅用于固体", "两者都仅用于液体"]
+            },
+
+            // ==================== 五、浮力 ====================
+            {
+                q: "阿基米德原理的公式是？",
+                a: "F浮 = ρ液gV排",
+                options: ["F浮 = ρ液gV排", "F浮 = mg", "F浮 = ρ物gV物", "F浮 = F向上 + F向下"]
+            },
+            {
+                q: "称重法测浮力的公式是？",
+                a: "F浮 = G - F示",
+                options: ["F浮 = G - F示", "F浮 = G + F示", "F浮 = F示 - G", "F浮 = G / F示"]
+            },
+            {
+                q: "物体漂浮或悬浮时，浮力与重力的关系是？",
+                a: "F浮 = G物",
+                options: ["F浮 = G物", "F浮 > G物", "F浮 < G物", "F浮 = 0"]
+            },
+            {
+                q: "浮力产生的本质原因用公式表示为？",
+                a: "F浮 = F向上 - F向下",
+                options: ["F浮 = F向上 - F向下", "F浮 = F向上 + F向下", "F浮 = ρ液gV物", "F浮 = G排"]
+            },
+
+            // ==================== 六、功和功率 ====================
+            {
+                q: "功的公式 W = Fs 中，s 是什么？",
+                a: "力的方向上移动的距离",
+                options: ["力的方向上移动的距离", "物体的总路程", "物体移动的位移大小", "任意方向的距离"]
+            },
+            {
+                q: "克服重力做功的公式是？",
+                a: "W = Gh",
+                options: ["W = Gh", "W = mg", "W = Fs", "W = Pt"]
+            },
+            {
+                q: "功率的通用公式是？",
+                a: "P = W/t",
+                options: ["P = W/t", "P = Fv", "P = mgh/t", "P = UI"]
+            },
+            {
+                q: "匀速运动时功率的推导式是？",
+                a: "P = Fv",
+                options: ["P = Fv", "P = W/t", "P = Fs", "P = mav"]
+            },
+
+            // ==================== 七、简单机械 ====================
+            {
+                q: "杠杆平衡条件（杠杆原理）的公式是？",
+                a: "F₁L₁ = F₂L₂",
+                options: ["F₁L₁ = F₂L₂", "F₁/L₁ = F₂/L₂", "F₁ + F₂ = L₁ + L₂", "F₁L₂ = F₂L₁"]
+            },
+            {
+                q: "滑轮组中，绳子自由端移动距离 s 与物体上升高度 h 的关系是？",
+                a: "s = nh",
+                options: ["s = nh", "s = h/n", "s = h", "s = n + h"]
+            },
+            {
+                q: "不计绳重和摩擦时，滑轮组拉力 F 等于？",
+                a: "F = (G物 + G动) / n",
+                options: ["F = (G物 + G动) / n", "F = G物 / n", "F = G动 / n", "F = G物 × n"]
+            },
+            {
+                q: "机械效率 η 的公式是？",
+                a: "η = W有/W总 × 100%",
+                options: ["η = W有/W总 × 100%", "η = W总/W有 × 100%", "η = W有 × W总", "η = W总 - W有"]
+            },
+
+            // ==================== 八、热学 ====================
+            {
+                q: "热量计算公式 Q = cmΔt 中，c 的单位是？",
+                a: "J/(kg·℃)",
+                options: ["J/(kg·℃)", "J/℃", "J/kg", "W/(m·℃)"]
+            },
+            {
+                q: "上海教程中，水的比热容 c水 是多少？",
+                a: "4.2×10³ J/(kg·℃)",
+                options: ["4.2×10³ J/(kg·℃)", "4.2 J/(kg·℃)", "4.2×10⁴ J/(kg·℃)", "1.0×10³ J/(kg·℃)"]
+            },
+            {
+                q: "固体、液体燃料完全燃烧放热公式是？",
+                a: "Q放 = mq",
+                options: ["Q放 = mq", "Q放 = qV", "Q放 = cmΔt", "Q放 = Pt"]
+            },
+            {
+                q: "气体燃料完全燃烧放热公式是？",
+                a: "Q放 = qV",
+                options: ["Q放 = qV", "Q放 = mq", "Q放 = cmΔt", "Q放 = Pt"]
+            },
+            {
+                q: "不计热量损失时，热平衡条件是？",
+                a: "Q吸 = Q放",
+                options: ["Q吸 = Q放", "Q吸 > Q放", "Q吸 < Q放", "Q吸 + Q放 = 0"]
+            },
+            {
+                q: "热机效率的公式是？",
+                a: "η = Q有效/Q放 × 100%",
+                options: ["η = Q有效/Q放 × 100%", "η = Q放/Q有效 × 100%", "η = Q有效 × Q放", "η = Q放 - Q有效"]
+            },
+
+            // ==================== 九、光学与声学 ====================
+            {
+                q: "光在真空中的速度 c 是？",
+                a: "3×10⁸ m/s",
+                options: ["3×10⁸ m/s", "3×10⁵ m/s", "340 m/s", "3×10¹⁰ m/s"]
+            },
+            {
+                q: "电磁波公式 c = λf 中，λ 表示什么？",
+                a: "波长",
+                options: ["波长", "频率", "周期", "振幅"]
+            },
+            {
+                q: "光的反射定律：反射角与入射角的关系是？",
+                a: "反射角等于入射角",
+                options: ["反射角等于入射角", "反射角大于入射角", "反射角小于入射角", "两者无关"]
+            },
+            {
+                q: "15℃时声音在空气中的传播速度是？",
+                a: "340 m/s",
+                options: ["340 m/s", "3×10⁸ m/s", "1500 m/s", "20 m/s"]
+            },
+            {
+                q: "回声测距时，距离 s 的计算公式是？",
+                a: "s = vt/2（声音往返）",
+                options: ["s = vt/2（声音往返）", "s = vt", "s = v/t", "s = 2vt"]
+            },
+
+            // ==================== 十、电学——欧姆定律 ====================
+            {
+                q: "欧姆定律的公式是？",
+                a: "I = U/R",
+                options: ["I = U/R", "U = I/R", "R = IU", "I = R/U"]
+            },
+            {
+                q: "关于电阻 R = U/I，下列说法正确的是？",
+                a: "R是导体属性，与U、I无关",
+                options: ["R是导体属性，与U、I无关", "R与U成正比", "R与I成反比", "R随U增大而增大"]
+            },
+            {
+                q: "串联电路中，流过各元件的电流关系是？",
+                a: "I = I₁ = I₂ = ... = In",
+                options: ["I = I₁ = I₂ = ... = In", "I = I₁ + I₂ + ... + In", "I > I₁", "I < I₁"]
+            },
+            {
+                q: "并联电路中，各支路两端电压关系是？",
+                a: "U = U₁ = U₂ = ... = Un",
+                options: ["U = U₁ = U₂ = ... = Un", "U = U₁ + U₂ + ... + Un", "U > U₁", "U < U₁"]
+            },
+            {
+                q: "两电阻 R₁、R₂ 并联后总电阻 R 等于？",
+                a: "R = R₁R₂/(R₁+R₂)",
+                options: ["R = R₁R₂/(R₁+R₂)", "R = R₁ + R₂", "R = (R₁+R₂)/(R₁R₂)", "R = R₁ - R₂"]
+            },
+
+            // ==================== 十一、电学——电功、电功率、电热 ====================
+            {
+                q: "电功的通用公式是？",
+                a: "W = UIt",
+                options: ["W = UIt", "W = I²Rt", "W = U²t/R", "W = Pt"]
+            },
+            {
+                q: "电功率的通用公式是？",
+                a: "P = UI",
+                options: ["P = UI", "P = I²R", "P = U²/R", "P = Wt"]
+            },
+            {
+                q: "焦耳定律的公式是？",
+                a: "Q = I²Rt",
+                options: ["Q = I²Rt", "Q = UIt", "Q = Pt", "Q = U²t/R"]
+            },
+            {
+                q: "纯电阻电路中，电功 W 与电热 Q 的关系是？",
+                a: "Q = W",
+                options: ["Q = W", "Q > W", "Q < W", "Q = 0"]
+            },
+            {
+                q: "电功率 P = W/t = UI 中，电功率的单位是？",
+                a: "W（瓦特）",
+                options: ["W（瓦特）", "J（焦耳）", "V（伏特）", "A（安培）"]
+            },
+            {
+                q: "纯电阻电路中，电功率的推导式是？",
+                a: "P = I²R = U²/R",
+                options: ["P = I²R = U²/R", "P = UI/t", "P = W/t²", "P = IR"]
+            },
+
+            // ==================== 十二、物理常量 ====================
+            {
+                q: "上海教程中，重力加速度 g 的精确值是？",
+                a: "9.8 N/kg",
+                options: ["9.8 N/kg", "10 N/kg", "9.8 m/s", "10 m/s²"]
+            },
+            {
+                q: "水的密度 ρ水 是多少？",
+                a: "1×10³ kg/m³",
+                options: ["1×10³ kg/m³", "1×10² kg/m³", "1 g/cm³ = 1×10⁴ kg/m³", "4.2×10³ kg/m³"]
+            },
+            {
+                q: "一节干电池的电压是？",
+                a: "1.5 V",
+                options: ["1.5 V", "220 V", "36 V", "3 V"]
+            },
+            {
+                q: "我国家庭电路的电压是？",
+                a: "220 V",
+                options: ["220 V", "380 V", "110 V", "36 V"]
+            },
+            {
+                q: "人体的安全电压是？",
+                a: "不高于36 V",
+                options: ["不高于36 V", "不高于220 V", "不高于110 V", "不高于12 V"]
+            },
+            {
+                q: "元电荷 e 的值约为？",
+                a: "1.6×10⁻¹⁹ C",
+                options: ["1.6×10⁻¹⁹ C", "1.6×10¹⁹ C", "9.8×10⁻¹⁹ C", "3×10⁸ C"]
+            },
+
+            // ==================== 补充题 ====================
+            {
+                q: "不计绳重和摩擦时，滑轮组机械效率 η = ?",
+                a: "η = G物/(G物 + G动)",
+                options: ["η = G物/(G物 + G动)", "η = G动/(G物 + G动)", "η = G物/G动", "η = nF/G物"]
+            },
+            {
+                q: "二力平衡的条件是？",
+                a: "同体、等大、反向、共线",
+                options: ["同体、等大、反向、共线", "等大、反向", "同向、等大", "异体、等大、反向"]
+            },
+            {
+                q: "串联电路中总电压与各部分电压的关系是？",
+                a: "U = U₁ + U₂ + ... + Un",
+                options: ["U = U₁ + U₂ + ... + Un", "U = U₁ = U₂ = ... = Un", "U = n × U₁", "U = U₁ / n"]
+            },
+            {
+                q: "并联电路中总电流与各支路电流的关系是？",
+                a: "I = I₁ + I₂ + ... + In",
+                options: ["I = I₁ + I₂ + ... + In", "I = I₁ = I₂ = ... = In", "I = I₁ × n", "I = I₁ / n"]
+            },
+            {
+                q: "纯电阻电路中，电功的推导式 W = I²Rt 与 W = U²t/R，两者的适用条件是？",
+                a: "仅适用于纯电阻电路",
+                options: ["仅适用于纯电阻电路", "适用于所有电路", "仅适用于电动机电路", "仅适用于照明电路"]
+            },
+            {
+                q: "凸透镜成像公式中，初中阶段的要求是？",
+                a: "以规律记忆为主，计算不做强制要求",
+                options: ["以规律记忆为主，计算不做强制要求", "必须熟练掌握公式计算", "只需记住符号含义", "不要求学习"]
+            },
+            {
+                q: "串联电路中总电阻等于？",
+                a: "R = R₁ + R₂ + ... + Rn",
+                options: ["R = R₁ + R₂ + ... + Rn", "R = 1/R₁ + 1/R₂ + ...", "R = R₁ × R₂", "R = R₁ - R₂"]
+            },
+            {
+                q: "Q吸 = cm(t - t₀) 中，t₀ 表示什么？",
+                a: "物体的初温",
+                options: ["物体的初温", "物体的末温", "环境温度", "标准温度"]
+            }
+        ];
+
+let QUESTION_COUNT = 10, quizData = [], correctCount = 0, answeredCount = 0;
+function shuffle(a){let r=[...a];for(let i=r.length-1;i>0;i--){let j=Math.floor(Math.random()*(i+1));[r[i],r[j]]=[r[j],r[i]]}return r}
+function loadQuiz(){document.getElementById("quiz").innerHTML="";document.getElementById("resultPanel").classList.remove("show");document.getElementById("progressText").textContent="0 / "+QUESTION_COUNT;document.getElementById("progressFill").style.width="0%";quizData=shuffle(questionBank).slice(0,QUESTION_COUNT);correctCount=0;answeredCount=0;let qe=document.getElementById("quiz");quizData.forEach((item,idx)=>{let opts=shuffle(item.options);let qDiv=document.createElement("div");qDiv.className="question";let td=document.createElement("div");td.className="q-title";td.innerHTML=`<span class="q-num">${idx+1}</span><span class="q-word">${item.q}</span>`;qDiv.appendChild(td);let og=document.createElement("div");og.className="options-grid";opts.forEach(opt=>{let btn=document.createElement("button");btn.className="option-btn";btn.textContent=opt;btn.addEventListener("click",()=>handleAnswer(idx,opt,qDiv,og,item.a));og.appendChild(btn)});qDiv.appendChild(og);qe.appendChild(qDiv)})}
+function handleAnswer(idx,chosen,qDiv,og,answer){if(qDiv.classList.contains("done"))return;let btns=og.querySelectorAll(".option-btn");btns.forEach(btn=>{btn.disabled=true;if(btn.textContent===answer)btn.classList.add("correct")});if(chosen!==answer){btns.forEach(btn=>{if(btn.textContent===chosen)btn.classList.add("wrong")})}else{correctCount++}qDiv.classList.add("done");answeredCount++;let pt=document.getElementById("progressText"),pf=document.getElementById("progressFill");pt.textContent=answeredCount+" / "+QUESTION_COUNT;pf.style.width=(answeredCount/QUESTION_COUNT*100)+"%";if(answeredCount===QUESTION_COUNT)setTimeout(showResult,300)}
+function showResult(){let t=QUESTION_COUNT,r=Math.round(correctCount/t*100);document.getElementById("statTotal").textContent=t;document.getElementById("statCorrect").textContent=correctCount;document.getElementById("statRate").textContent=r+"%";let gt,gc;if(r===100){gt="🏆 满分！太厉害了！";gc="grade-perfect"}else if(r>=90){gt="🌟 优秀！继续保持！";gc="grade-excellent"}else if(r>=70){gt="👍 良好，还有进步空间";gc="grade-good"}else if(r>=60){gt="📚 及格，继续加油";gc="grade-fair"}else{gt="💪 加油，多练习就会进步";gc="grade-poor"}document.getElementById("resultTitle").textContent="📊 测试结果";let ge=document.getElementById("resultGrade");ge.textContent=gt;ge.className="result-grade "+gc;document.getElementById("resultPanel").classList.add("show");document.getElementById("resultPanel").scrollIntoView({behavior:"smooth",block:"center"})}
+function restart(){QUESTION_COUNT=parseInt(document.getElementById("countSelect").value);loadQuiz();window.scrollTo({top:0,behavior:"smooth"})}
+document.getElementById("countSelect").addEventListener("change",restart);loadQuiz();
+</body>
+</html>

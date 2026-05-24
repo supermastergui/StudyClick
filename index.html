@@ -3,88 +3,33 @@
 <head>
 <meta charset="UTF-8">
 <title>StudyClick</title>
-
 <style>
+* { box-sizing: border-box; margin: 0; padding: 0; }
 body {
-    margin: 0;
-    font-family: "Segoe UI", Arial;
-    background: linear-gradient(135deg, #e3f2fd, #fce4ec);
+    font-family: "Segoe UI", "Microsoft YaHei", sans-serif;
+    background: linear-gradient(135deg, #e8eaf6 0%, #fce4ec 50%, #e0f2f1 100%);
+    min-height: 100vh;
 }
-
-/* ===== 顶部 ===== */
-.header {
-    text-align: center;
-    padding: 50px 20px 20px;
-}
-
-.header h1 {
-    margin: 0;
-    font-size: 36px;
-    color: #333;
-}
-
-.header p {
-    color: #666;
-    margin-top: 10px;
-}
-
-/* ===== 主体容器 ===== */
-.container {
-    max-width: 1000px;
-    margin: auto;
-    padding: 20px;
-}
-
-/* ===== 卡片网格 ===== */
-.grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
-    gap: 20px;
-}
-
-/* ===== 学科卡片 ===== */
+.header { text-align: center; padding: 50px 20px 20px; }
+.header h1 { margin: 0; font-size: 36px; color: #333; }
+.header p { color: #666; margin-top: 6px; font-size: 14px; }
+.container { max-width: 1000px; margin: auto; padding: 20px; }
+.grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 20px; }
 .card {
-    background: #fff;
-    border-radius: 16px;
-    padding: 25px;
-    text-align: center;
-    cursor: pointer;
-    transition: 0.25s;
-    box-shadow: 0 6px 18px rgba(0,0,0,0.08);
+    background: #fff; border-radius: 16px; padding: 25px;
+    text-align: center; cursor: pointer;
+    box-shadow: 0 2px 12px rgba(0,0,0,0.06);
+    transition: all 0.25s;
 }
-
 .card:hover {
     transform: translateY(-6px);
-    box-shadow: 0 10px 25px rgba(0,0,0,0.12);
+    box-shadow: 0 6px 20px rgba(92,107,192,0.18);
 }
-
-/* 图标 */
-.icon {
-    font-size: 40px;
-    margin-bottom: 10px;
-}
-
-/* 标题 */
-.card h3 {
-    margin: 10px 0 5px;
-    color: #333;
-}
-
-/* 描述 */
-.card p {
-    color: #777;
-    font-size: 14px;
-}
-
-/* ===== 页脚 ===== */
-.footer {
-    text-align: center;
-    margin: 40px 0;
-    color: #888;
-    font-size: 14px;
-}
+.icon { font-size: 40px; margin-bottom: 10px; }
+.card h3 { margin: 8px 0 5px; color: #333; }
+.card p { color: #777; font-size: 14px; }
+.footer { text-align: center; margin: 20px 0; color: #aaa; font-size: 12px; }
 </style>
-
 </head>
 <body>
 
@@ -94,10 +39,8 @@ body {
 </div>
 
 <div class="container">
-
     <div class="grid">
 
-        <!-- 英语 -->
         <div class="card" onclick="go('subjects/english287.html')">
             <div class="icon">📘</div>
             <h3>英语 (1-287) <br>基础版</h3>
@@ -122,28 +65,30 @@ body {
             <p>单词记忆 / 词汇测试</p>
         </div>
 
-        <!-- 语文 -->
         <div class="card" onclick="go('subjects/chinese.html')">
             <div class="icon">📖</div>
             <h3>语文</h3>
             <p>文学常识 / 阅读训练</p>
         </div>
 
-        <!-- 数学 -->
         <div class="card" onclick="go('subjects/math.html')">
             <div class="icon">🔢</div>
             <h3>数学</h3>
             <p>公式记忆 / 题目训练</p>
         </div>
 
-        <!-- 化学 -->
         <div class="card" onclick="go('subjects/chemistry.html')">
             <div class="icon">🧪</div>
             <h3>化学</h3>
             <p>知识点 / 公式记忆</p>
         </div>
 
-        <!-- 以后扩展 -->
+        <div class="card" onclick="go('subjects/physics.html')">
+            <div class="icon">⚡</div>
+            <h3>物理</h3>
+            <p>公式记忆 / 题目训练</p>
+        </div>
+
         <div class="card" onclick="comingSoon()">
             <div class="icon">➕</div>
             <h3>更多学科</h3>
@@ -151,7 +96,6 @@ body {
         </div>
 
     </div>
-
 </div>
 
 <div class="footer">
@@ -159,14 +103,8 @@ body {
 </div>
 
 <script>
-function go(url){
-    window.location.href = url;
-}
-
-function comingSoon(){
-    alert("该学科正在开发中 🚧");
-}
+function go(url){ window.location.href = url; }
+function comingSoon(){ alert("该学科正在开发中 🚧"); }
 </script>
-
 </body>
 </html>
